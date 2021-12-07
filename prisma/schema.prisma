@@ -1,0 +1,151 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                Int                    @id @default(autoincrement())
+  name              String
+  description       String?
+  photo             String?
+  sphere            String?
+  user_technologies User_technologies[]
+  work_experiences  User_work_experience[]
+  user_educations   User_education[]
+  cvs               CV[]
+
+}
+
+model Projects {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  description          String?
+  link                 String?
+  type                 ProjectTypes?
+  photos               String[]
+  country              String?
+  project_technologies Project_technologies[]
+  cv_projects          CV_projects[]
+}
+
+model Technologies {
+  id   Int              @id @default(autoincrement())
+  name String
+  type TechnologyTypes?
+
+  user_technologies    User_technologies[]
+  project_technologies Project_technologies[]
+
+  @@unique([name, type])
+}
+
+model CV {
+  id      Int     @id @default(autoincrement())
+  user_id Int
+  pdf     String? //TODO how to store a pdf
+
+  user        User          @relation(fields: [user_id], references: [id])
+  cv_projects CV_projects[]
+
+  @@index([user_id])
+}
+
+model Work_experience {
+  id               Int                    @id @default(autoincrement())
+  name             String
+  user_experiences User_work_experience[]
+}
+
+model Education {
+  id              Int              @id @default(autoincrement())
+  name            String
+  user_educations User_education[]
+}
+
+model User_technologies {
+  id            Int @id @default(autoincrement())
+  user_id       Int
+  technology_id Int
+
+  user       User         @relation(fields: [user_id], references: [id])
+  technology Technologies @relation(fields: [technology_id], references: [id])
+
+  @@index([user_id, technology_id])
+}
+
+model Project_technologies {
+  id            Int @id @default(autoincrement())
+  project_id    Int
+  technology_id Int
+
+  project    Projects     @relation(fields: [project_id], references: [id])
+  technology Technologies @relation(fields: [technology_id], references: [id])
+
+  @@index([project_id, technology_id])
+}
+
+model CV_projects {
+  id          Int       @id @default(autoincrement())
+  cv_id       Int
+  project_id  Int
+  start_date  DateTime?
+  end_date    DateTime?
+  description String?
+  position    String?
+
+  cv      CV       @relation(fields: [cv_id], references: [id])
+  project Projects @relation(fields: [project_id], references: [id])
+
+  @@index([project_id, cv_id])
+}
+
+model User_work_experience {
+  id                 Int       @id @default(autoincrement())
+  work_experience_id Int
+  user_id            Int
+  start_date         DateTime?
+  end_date           DateTime?
+  description        String?
+  position           String?
+
+  work_experience Work_experience @relation(fields: [work_experience_id], references: [id])
+  user            User            @relation(fields: [user_id], references: [id])
+
+  @@index([user_id, work_experience_id])
+}
+
+model User_education {
+  id           Int       @id @default(autoincrement())
+  education_id Int
+  user_id      Int
+  start_date   DateTime?
+  end_date     DateTime?
+  department   String?
+
+  education Education @relation(fields: [education_id], references: [id])
+  user      User      @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+}
+
+enum ProjectTypes {
+  WEB_SERVICE
+  WEB_SITE
+  CRM
+}
+
+enum TechnologyTypes {
+  FRONT_END
+  BACK_END
+  DB
+  HOSTING
+  SOFT
+  OTHER
+}
