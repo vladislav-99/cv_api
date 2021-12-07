@@ -36,9 +36,9 @@ model Projects {
 }
 
 model Technologies {
-  id   Int              @id @default(autoincrement())
+  id   Int             @id @default(autoincrement())
   name String
-  type TechnologyTypes?
+  type TechnologyTypes
 
   user_technologies    User_technologies[]
   project_technologies Project_technologies[]

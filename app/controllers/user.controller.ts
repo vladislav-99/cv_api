@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/HttpExceptions";
 import { toUser } from "../mapper/user.mapper";
-import userService from "../services/user.services";
+import userService from "../services/user.service";
 
 export const getUser = async (
   req: Request,
@@ -73,8 +73,6 @@ export const updateUser = async (
       id,
       ...req.body,
     });
-
-    console.log(userBody);
 
     const updatedUser = await userService.updateUser(userBody).catch((err) => {
       next(err);

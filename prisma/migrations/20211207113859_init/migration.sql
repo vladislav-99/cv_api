@@ -32,7 +32,7 @@ CREATE TABLE "Projects" (
 CREATE TABLE "Technologies" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "type" "TechnologyTypes",
+    "type" "TechnologyTypes" NOT NULL,
 
     CONSTRAINT "Technologies_pkey" PRIMARY KEY ("id")
 );
@@ -120,6 +120,24 @@ CREATE TABLE "User_education" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Technologies_name_type_key" ON "Technologies"("name", "type");
+
+-- CreateIndex
+CREATE INDEX "CV_user_id_idx" ON "CV"("user_id");
+
+-- CreateIndex
+CREATE INDEX "User_technologies_user_id_technology_id_idx" ON "User_technologies"("user_id", "technology_id");
+
+-- CreateIndex
+CREATE INDEX "Project_technologies_project_id_technology_id_idx" ON "Project_technologies"("project_id", "technology_id");
+
+-- CreateIndex
+CREATE INDEX "CV_projects_project_id_cv_id_idx" ON "CV_projects"("project_id", "cv_id");
+
+-- CreateIndex
+CREATE INDEX "User_work_experience_user_id_work_experience_id_idx" ON "User_work_experience"("user_id", "work_experience_id");
+
+-- CreateIndex
+CREATE INDEX "User_education_user_id_idx" ON "User_education"("user_id");
 
 -- AddForeignKey
 ALTER TABLE "CV" ADD CONSTRAINT "CV_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

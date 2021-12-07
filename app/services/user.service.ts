@@ -36,7 +36,7 @@ class UserService {
       .create({
         data: {
           ...userData,
-          name: userData.name!,
+          name,
         },
         include: this.userPropertiesInclude,
       })
@@ -67,11 +67,11 @@ class UserService {
   }
 
   async updateUser(userData: Partial<UserType>): Promise<User> {
-    const { id, ...data } = userData;
-    const { name } = userData;
+    const { id, ...updatingData } = userData;
+    const { name } = updatingData;
 
-    if (!name || (name && !name.trim()) || name === undefined) {
-      throw new HttpException(400, "name field is reqired");
+    if (name !== undefined && !name) {
+      throw new HttpException(400, "name field cannot be empty");
     }
 
     return await prisma.user
@@ -79,7 +79,7 @@ class UserService {
         where: {
           id,
         },
-        data,
+        data: updatingData,
       })
       .catch((err) => {
         console.log(err);
