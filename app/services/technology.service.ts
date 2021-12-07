@@ -44,8 +44,6 @@ class TechnologyService {
       throw new HttpException(400, "name field cannot be empty");
     }
 
-    console.log(updatingData);
-
     return await prisma.technologies
       .update({
         where: {
@@ -68,7 +66,7 @@ class TechnologyService {
       })
       .catch((err) => {
         console.log(err);
-        throw new HttpException(404, "Technology is not find");
+        throw new HttpException(404, "Technology is not found");
       });
   }
 }

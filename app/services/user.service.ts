@@ -96,7 +96,7 @@ class UserService {
       })
       .catch((err) => {
         console.log(err);
-        throw new HttpException(404, "User is not find");
+        throw new HttpException(404, "User is not found");
       });
   }
 }
