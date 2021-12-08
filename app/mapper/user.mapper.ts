@@ -36,6 +36,5 @@ export const toUser = (input: any) => {
     return prop;
   });
 
-  console.log(mappedInput);
   return new UserMapper().create(mappedInput).toJSON<UserType>();
 };
