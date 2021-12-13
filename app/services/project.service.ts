@@ -1,6 +1,6 @@
 import { Projects } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
-import { ProjectDTO } from "../controllers/mappers/DTOtypes";
+import { ProjectDTO } from "../controllers/mappers/toDTO/DTOtypes";
 import prisma from "../prisma";
 import {
   mapPojectToEntity,
@@ -11,8 +11,12 @@ import {
   ProjectEntity,
   UpdateProjectEntity,
 } from "../repositories/entities/project.entity";
-import { toProject } from "../controllers/mappers/project.mapper";
+import { toProject } from "../controllers/mappers/toDTO/project.mapper";
 
+type GetProjectsProps = {
+  skip?: number;
+  take?: number;
+};
 class ProjectSevice {
   async getProjectById(id: number): Promise<Projects | null> {
     return await prisma.projects
@@ -27,8 +31,21 @@ class ProjectSevice {
       });
   }
 
-  async getProjects(): Promise<Projects[]> {
-    return await prisma.projects.findMany();
+  async getProjects({ skip, take }: GetProjectsProps): Promise<ProjectDTO[]> {
+    const projectRepository = new ProjectRepository();
+
+    const projectEntities = await projectRepository
+      .getProjects(skip, take)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(400, "Cannot get projects");
+      });
+
+    const createdProjectDTOs: ProjectDTO[] = projectEntities.map((ety) =>
+      toProject(ety)
+    );
+
+    return createdProjectDTOs;
   }
 
   async createProject(projectDTO: ProjectDTO): Promise<ProjectDTO> {

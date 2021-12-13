@@ -2,7 +2,7 @@
   "name": "script",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon server.ts"
+    "dev": "nodemon --delay 500ms server.ts"
   },
   "dependencies": {
     "@prisma/client": "3.5.0",

@@ -1,11 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { toProject } from "./mappers/project.mapper";
+import { toProject } from "./mappers/toDTO/project.mapper";
 
 import projectService from "../services/project.service";
-import { ProjectViewModelType } from "./viewModels/project.model";
-import { ProjectDTO } from "./mappers/DTOtypes";
-import { Projects } from "@prisma/client";
+import {
+  ProjectViewModelType,
+  ProjectVM,
+} from "./mappers/toVM/viewModels/project.model";
+import { ProjectDTO } from "./mappers/toDTO/DTOtypes";
+import { toProjectVM } from "./mappers/toVM/project.mapper";
 
 export const getAllProjects = async (
   req: Request,
@@ -13,9 +16,18 @@ export const getAllProjects = async (
   next: NextFunction
 ) => {
   try {
-    const projects = await projectService.getProjects();
+    const { skip, take } = req.query;
 
-    res.json(projects);
+    const options = {
+      skip: skip ? Number(skip) : undefined,
+      take: take ? Number(take) : undefined,
+    };
+
+    const projects: ProjectDTO[] = await projectService.getProjects(options);
+
+    const projectMVs: ProjectVM[] = projects.map((p) => toProjectVM(p));
+
+    res.json(projectMVs);
   } catch (error) {
     next(error);
   }

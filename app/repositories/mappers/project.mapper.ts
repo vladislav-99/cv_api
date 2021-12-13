@@ -1,4 +1,4 @@
-import { ProjectDTO } from "../../controllers/mappers/DTOtypes";
+import { ProjectDTO } from "../../controllers/mappers/toDTO/DTOtypes";
 
 export const mapPojectToEntity = (project: ProjectDTO) => {
   return {

@@ -1,6 +1,6 @@
 import { Technologies } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
-import { TechnologyDTO } from "../controllers/mappers/DTOtypes";
+import { TechnologyDTO } from "../controllers/mappers/toDTO/DTOtypes";
 import prisma from "../prisma";
 
 class TechnologyService {
