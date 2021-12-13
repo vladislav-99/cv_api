@@ -9,8 +9,6 @@ import { Selector } from "./selector";
 import { mapObject } from "map-anything";
 import { TechnologyTypes } from "@prisma/client";
 
-export type TechnologyType = Pick<TechnologyMapper, "id" | "name" | "type">;
-
 @CacheKey("TechnologyTypeEnumSerializerDeserializer")
 class TechnologyTypesEnumSerializerDeserializer
   implements Deserializer, Serializer

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/HttpExceptions";
-import { toUser } from "../mapper/user.mapper";
+import HttpException from "../exceptions/http.exception";
+import { toUser } from "./mappers/user.mapper";
 import userService from "../services/user.service";
 
 export const getUser = async (

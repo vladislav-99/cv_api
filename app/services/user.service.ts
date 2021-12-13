@@ -1,7 +1,7 @@
 import { User } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
+import HttpException from "../exceptions/http.exception";
 import prisma from "../prisma";
-import { UserType } from "../mapper/user.mapper";
+import { UserDTO } from "../controllers/mappers/DTOtypes";
 
 class UserService {
   userPropertiesInclude = {
@@ -25,7 +25,7 @@ class UserService {
     },
   };
 
-  async createUser(userData: UserType): Promise<User> {
+  async createUser(userData: UserDTO): Promise<User> {
     const { name } = userData;
 
     if (!name || (name && !name.trim()) || name === undefined) {
@@ -66,7 +66,7 @@ class UserService {
     });
   }
 
-  async updateUser(userData: Partial<UserType>): Promise<User> {
+  async updateUser(userData: Partial<UserDTO>): Promise<User> {
     const { id, ...updatingData } = userData;
     const { name } = updatingData;
 

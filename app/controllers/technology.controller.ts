@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/HttpExceptions";
-import { toTechnology } from "../mapper/tecnology.mapper";
+import HttpException from "../exceptions/http.exception";
+import { toTechnology } from "./mappers/tecnology.mapper";
 import technologyService from "../services/technology.service";
 
 export const getTechnologies = async (req: Request, res: Response) => {

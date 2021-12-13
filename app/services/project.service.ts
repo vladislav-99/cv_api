@@ -1,7 +1,17 @@
 import { Projects } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
-import { ProjectType } from "../mapper/project.mapper";
+import HttpException from "../exceptions/http.exception";
+import { ProjectDTO } from "../controllers/mappers/DTOtypes";
 import prisma from "../prisma";
+import {
+  mapPojectToEntity,
+  mapUpdatedPojectToEntity,
+} from "../repositories/mappers/project.mapper";
+import ProjectRepository from "../repositories/project.repository";
+import {
+  ProjectEntity,
+  UpdateProjectEntity,
+} from "../repositories/entities/project.entity";
+import { toProject } from "../controllers/mappers/project.mapper";
 
 class ProjectSevice {
   async getProjectById(id: number): Promise<Projects | null> {
@@ -21,50 +31,39 @@ class ProjectSevice {
     return await prisma.projects.findMany();
   }
 
-  async createProject(projectData: ProjectType): Promise<Projects> {
-    const { name, type } = projectData;
+  async createProject(projectDTO: ProjectDTO): Promise<ProjectDTO> {
+    const projectEntity: ProjectEntity = mapPojectToEntity(projectDTO);
 
-    if (!name || (name && !name.trim()) || name === undefined) {
-      throw new HttpException(400, "'name' field is reqired");
-    }
+    const projectRepository = new ProjectRepository();
 
-    if (!type) {
-      throw new HttpException(400, "'type' field is wrong");
-    }
-
-    return await prisma.projects
-      .create({
-        data: {
-          ...projectData,
-          name,
-          type,
-        },
-      })
+    const createdProjectEntity: Projects = await projectRepository
+      .createProject(projectEntity)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot create project");
       });
+
+    const createdProjectDTO: ProjectDTO = toProject(createdProjectEntity);
+
+    return createdProjectDTO;
   }
 
-  async updateProject(projectData: Partial<ProjectType>): Promise<Projects> {
-    const { id, ...updatingData } = projectData;
-    const { name } = updatingData;
+  async updateProject(projectDTO: Partial<ProjectDTO>): Promise<ProjectDTO> {
+    const projectUpdateEntity: UpdateProjectEntity =
+      mapUpdatedPojectToEntity(projectDTO);
 
-    if (name !== undefined && !name) {
-      throw new HttpException(400, "name field cannot be empty");
-    }
+    const projectRepository = new ProjectRepository();
 
-    return await prisma.projects
-      .update({
-        where: {
-          id,
-        },
-        data: updatingData,
-      })
+    const updatedProjectEntity: Projects = await projectRepository
+      .updateProject(projectUpdateEntity)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot update project");
       });
+
+    const createdProjectDTO: ProjectDTO = toProject(updatedProjectEntity);
+
+    return createdProjectDTO;
   }
 
   async deleteProject(id: number): Promise<Projects | null> {

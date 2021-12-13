@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/HttpExceptions";
-import { toExperience } from "../mapper/experience.mapper";
+import HttpException from "../exceptions/http.exception";
+import { ExperienceDTO } from "./mappers/DTOtypes";
 import experienceService from "../services/experince.service";
 
 export const getAllExperiences = async (req: Request, res: Response) => {
@@ -14,13 +14,11 @@ export const createExperience = async (
   next: NextFunction
 ) => {
   try {
-    const experienceBody = toExperience(req.body);
-
-    const createdExperience = await experienceService.createExperience(
-      experienceBody
-    );
-
-    res.status(200).json(createdExperience);
+    // const experience: experineceType = toExperience(req.body);
+    // const createdExperience = await experienceService.createExperience(
+    //   experienceBody
+    // );
+    // res.status(200).json(createdExperience);
   } catch (error) {
     next(error);
   }
@@ -32,13 +30,13 @@ export const updateExperience = async (
 ) => {
   try {
     const { id } = req.params;
-    const projectBody = toExperience({
+    const projectModel: ExperienceDTO = {
       id,
       ...req.body,
-    });
+    };
 
     const updatedExperience = await experienceService.updateExperience(
-      projectBody
+      projectModel
     );
 
     res.status(200).json(updatedExperience);

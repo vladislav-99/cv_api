@@ -1,6 +1,6 @@
 import { Work_experience } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
-import { ExperienceType } from "../mapper/experience.mapper";
+import HttpException from "../exceptions/http.exception";
+import { ExperienceDTO } from "../controllers/mappers/DTOtypes";
 import prisma from "../prisma";
 
 class ExperienceSevice {
@@ -9,7 +9,7 @@ class ExperienceSevice {
   }
 
   async createExperience(
-    experienceDara: ExperienceType
+    experienceDara: ExperienceDTO
   ): Promise<Work_experience> {
     const { name } = experienceDara;
 
@@ -17,11 +17,15 @@ class ExperienceSevice {
       throw new HttpException(400, "'name' field is reqired");
     }
 
+    // const prismaEty =  {name};
+
+    // const experienceRepository = new ExperienceRepository();
+
+    // await experienceRepository.createExperience(prismaEty);
+
     return await prisma.work_experience
       .create({
-        data: {
-          name,
-        },
+        data: experienceDara,
       })
       .catch((err) => {
         console.log(err);
@@ -30,7 +34,7 @@ class ExperienceSevice {
   }
 
   async updateExperience(
-    experienceDara: Partial<ExperienceType>
+    experienceDara: Partial<ExperienceDTO>
   ): Promise<Work_experience> {
     const { id, ...updatingData } = experienceDara;
     const { name } = updatingData;

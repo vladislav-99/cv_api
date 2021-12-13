@@ -1,6 +1,6 @@
 import { Technologies } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
-import { TechnologyType } from "../mapper/tecnology.mapper";
+import HttpException from "../exceptions/http.exception";
+import { TechnologyDTO } from "../controllers/mappers/DTOtypes";
 import prisma from "../prisma";
 
 class TechnologyService {
@@ -8,9 +8,7 @@ class TechnologyService {
     return await prisma.technologies.findMany();
   }
 
-  async createTechnology(
-    technologyData: TechnologyType
-  ): Promise<Technologies> {
+  async createTechnology(technologyData: TechnologyDTO): Promise<Technologies> {
     const { name, type } = technologyData;
 
     if (!name || (name && !name.trim()) || name === undefined) {
@@ -35,7 +33,7 @@ class TechnologyService {
   }
 
   async updateTechnology(
-    technologyData: Partial<TechnologyType>
+    technologyData: Partial<TechnologyDTO>
   ): Promise<Technologies> {
     const { id, ...updatingData } = technologyData;
     const { name } = updatingData;

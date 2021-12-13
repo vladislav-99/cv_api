@@ -1,11 +1,7 @@
 import { JsonProperty, ObjectMapper } from "json-object-mapper";
 import { Selector } from "./selector";
 import { mapObject } from "map-anything";
-
-export type UserType = Pick<
-  UserMapper,
-  "id" | "name" | "description" | "photo" | "sphere"
->;
+import { UserDTO } from "./DTOtypes";
 
 export class UserMapper extends Selector {
   @JsonProperty()
@@ -36,5 +32,5 @@ export const toUser = (input: any) => {
     return prop;
   });
 
-  return new UserMapper().create(mappedInput).toJSON<UserType>();
+  return new UserMapper().create(mappedInput).toJSON<UserDTO>();
 };
