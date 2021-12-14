@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { ExperienceDTO } from "./mappers/toDTO/DTOtypes";
+import { ExperienceDTO } from "./mappers/toDTO/types";
 import experienceService from "../services/experince.service";
 
 export const getAllExperiences = async (req: Request, res: Response) => {

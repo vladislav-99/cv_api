@@ -1,7 +1,7 @@
 import { JsonProperty, ObjectMapper } from "json-object-mapper";
 import { Selector } from "./selector";
 import { mapObject } from "map-anything";
-import { UserDTO } from "./DTOtypes";
+import { UserDTO } from "./types";
 
 export class UserMapper extends Selector {
   @JsonProperty()

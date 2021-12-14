@@ -1,7 +1,7 @@
 import { User } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
 import prisma from "../prisma";
-import { UserDTO } from "../controllers/mappers/toDTO/DTOtypes";
+import { UserDTO } from "../controllers/mappers/toDTO/types";
 
 class UserService {
   userPropertiesInclude = {

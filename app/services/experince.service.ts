@@ -1,6 +1,6 @@
 import { Work_experience } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
-import { ExperienceDTO } from "../controllers/mappers/toDTO/DTOtypes";
+import { ExperienceDTO } from "../controllers/mappers/toDTO/types";
 import prisma from "../prisma";
 
 class ExperienceSevice {
