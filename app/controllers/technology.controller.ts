@@ -1,7 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/HttpExceptions";
-import { toTechnology } from "../mapper/tecnology.mapper";
-import technologyService from "../services/technology.service";
+import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/http.exception';
+import { mapVmToDto } from '../mappers/technology.mapper';
+import { TechnologyMv } from '../mappers/types/technology.types';
+import technologyService from '../services/technology.service';
 
 export const getTechnologies = async (req: Request, res: Response) => {
   const technologies = await technologyService.getTechnologies();
@@ -12,17 +13,14 @@ export const getTechnologies = async (req: Request, res: Response) => {
 export const createTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
-    const technologyBody = toTechnology(req.body);
-
-    if (req.body.type && !technologyBody.type) {
-      return next(new HttpException(400, "type's value is wrong"));
-    }
+    const technologyModel: TechnologyMv = req.body;
+    const technologyDto = mapVmToDto.created(technologyModel);
 
     const technology = await technologyService
-      .createTechnology(technologyBody)
+      .createTechnology(technologyDto)
       .catch((err) => {
         next(err);
       });
@@ -30,28 +28,26 @@ export const createTechnology = async (
     res.status(200).json(technology);
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };
 
 export const updateTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
-    const userBody = toTechnology({
+
+    const technologyModel: TechnologyMv = {
       id,
       ...req.body,
-    });
-
-    if (!userBody.name && !userBody.type) {
-      return next(new HttpException(400, "Fields values are wrong"));
-    }
+    };
+    const technologyDto = mapVmToDto.updated(technologyModel);
 
     const updatedTechnology = await technologyService
-      .updateTechnology(userBody)
+      .updateTechnology(technologyDto)
       .catch((err) => {
         next(err);
       });
@@ -59,14 +55,14 @@ export const updateTechnology = async (
     res.status(200).json(updatedTechnology);
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };
 
 export const deleteTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -84,6 +80,6 @@ export const deleteTechnology = async (
     }
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };

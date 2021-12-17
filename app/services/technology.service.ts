@@ -1,7 +1,11 @@
-import { Technologies } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
-import { TechnologyType } from "../mapper/tecnology.mapper";
-import prisma from "../prisma";
+import { Technologies } from '.prisma/client';
+import HttpException from '../exceptions/http.exception';
+import {
+  TechnologyCreateDTO,
+  TechnologyUpdateDTO,
+} from '../mappers/types/technology.types';
+import prisma from '../prisma';
+import TechnologyRepository from '../repositories/technology.repository';
 
 class TechnologyService {
   async getTechnologies(): Promise<Technologies[]> {
@@ -9,67 +13,38 @@ class TechnologyService {
   }
 
   async createTechnology(
-    technologyData: TechnologyType
+    technologyData: TechnologyCreateDTO,
   ): Promise<Technologies> {
-    const { name, type } = technologyData;
+    const technologyRepository = new TechnologyRepository();
 
-    if (!name || (name && !name.trim()) || name === undefined) {
-      throw new HttpException(400, "name field is reqired");
-    }
-
-    if (!type) {
-      throw new HttpException(400, "type field is reqired");
-    }
-
-    return await prisma.technologies
-      .create({
-        data: {
-          name,
-          type,
-        },
-      })
+    return await technologyRepository
+      .createTechnology(technologyData)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot create technology");
+        throw new HttpException(400, 'Cannot create technology');
       });
   }
 
   async updateTechnology(
-    technologyData: Partial<TechnologyType>
+    technologyData: TechnologyUpdateDTO,
   ): Promise<Technologies> {
-    const { id, ...updatingData } = technologyData;
-    const { name } = updatingData;
+    const technologyRepository = new TechnologyRepository();
 
-    if (name !== undefined && !name) {
-      throw new HttpException(400, "name field cannot be empty");
-    }
-
-    console.log(updatingData);
-
-    return await prisma.technologies
-      .update({
-        where: {
-          id,
-        },
-        data: updatingData,
-      })
+    return await technologyRepository
+      .updateTechnology(technologyData)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot update technology");
+        throw new HttpException(400, 'Cannot update technology');
       });
   }
 
   async deleteTechnology(id: number): Promise<Technologies> {
-    return await prisma.technologies
-      .delete({
-        where: {
-          id,
-        },
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(404, "Technology is not find");
-      });
+    const technologyRepository = new TechnologyRepository();
+
+    return await technologyRepository.deleteTechnology(id).catch((err) => {
+      console.log(err);
+      throw new HttpException(404, 'Technology is not found');
+    });
   }
 }
 

@@ -28,7 +28,7 @@ model Projects {
   name                 String
   description          String?
   link                 String?
-  type                 ProjectTypes?
+  type                 ProjectTypes
   photos               String[]
   country              String?
   project_technologies Project_technologies[]

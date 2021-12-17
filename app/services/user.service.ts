@@ -1,103 +1,58 @@
-import { User } from ".prisma/client";
-import HttpException from "../exceptions/HttpExceptions";
-import prisma from "../prisma";
-import { UserType } from "../mapper/user.mapper";
+import { User } from '.prisma/client';
+import HttpException from '../exceptions/http.exception';
+import { UserCreatedDTO, UserUpdatedDTO } from '../mappers/types/user.types';
+import { mapDtoToEty, mapEtyToDto } from '../mappers/user.mapper';
+import UserRepository from '../repositories/user.repository';
+import { PaginationsProps } from '../types';
+
 
 class UserService {
-  userPropertiesInclude = {
-    user_technologies: {
-      select: {
-        technology: true,
-      },
-    },
-    work_experiences: {
-      select: {
-        work_experience: true,
-      },
-    },
-    user_educations: {
-      select: {
-        start_date: true,
-        end_date: true,
-        department: true,
-        education: true,
-      },
-    },
-  };
+  async createUser(userData: UserCreatedDTO) {
+    const userEty = mapDtoToEty.created(userData);
 
-  async createUser(userData: UserType): Promise<User> {
-    const { name } = userData;
+    const userRepository = new UserRepository();
 
-    if (!name || (name && !name.trim()) || name === undefined) {
-      throw new HttpException(400, "name field is reqired");
-    }
-
-    return await prisma.user
-      .create({
-        data: {
-          ...userData,
-          name,
-        },
-        include: this.userPropertiesInclude,
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(400, "Cannot create user");
-      });
-  }
-
-  async getUserById(id: number): Promise<User | null> {
-    return await prisma.user
-      .findFirst({
-        where: {
-          id,
-        },
-        include: this.userPropertiesInclude,
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(404, "User is not found");
-      });
-  }
-
-  async getAllUsers(): Promise<User[]> {
-    return await prisma.user.findMany({
-      include: this.userPropertiesInclude,
+    return await userRepository.createUser(userEty).catch((err) => {
+      console.log(err);
+      throw new HttpException(400, 'Cannot create user');
     });
   }
 
-  async updateUser(userData: Partial<UserType>): Promise<User> {
-    const { id, ...updatingData } = userData;
-    const { name } = updatingData;
+  async getUserById(id: number) {
+    const userRepository = new UserRepository();
 
-    if (name !== undefined && !name) {
-      throw new HttpException(400, "name field cannot be empty");
-    }
+    const userEty = await userRepository.getUser(id).catch((err) => {
+      console.log(err);
+      throw new HttpException(404, 'User is not found');
+    });
 
-    return await prisma.user
-      .update({
-        where: {
-          id,
-        },
-        data: updatingData,
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(400, "Cannot update user");
-      });
+    if (!userEty) throw new HttpException(404, 'User is not found');
+
+    return mapEtyToDto.userInfo(userEty);
+  }
+
+  async getAllUsers({ skip, take }: PaginationsProps) {
+    const userRepository = new UserRepository();
+    return await userRepository.getUsers(skip, take);
+  }
+
+  async updateUser(userData: UserUpdatedDTO) {
+    const userEty = mapDtoToEty.updated(userData);
+    const userRepository = new UserRepository();
+
+    return await userRepository.updateUser(userEty).catch((err) => {
+      console.log(err);
+      throw new HttpException(400, 'Cannot update user');
+    });
   }
 
   async deleteUser(id: number): Promise<User> {
-    return await prisma.user
-      .delete({
-        where: {
-          id,
-        },
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(404, "User is not find");
-      });
+    const userRepository = new UserRepository();
+
+    return await userRepository.deleteUser(id).catch((err) => {
+      console.log(err);
+      throw new HttpException(404, 'User is not found');
+    });
   }
 }
 
