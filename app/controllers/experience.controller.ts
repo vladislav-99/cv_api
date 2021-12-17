@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { mapVmToDto } from "../mappers/experience.mapper";
-import { ExperienceMv } from "../mappers/types/experience.types";
-import experienceService from "../services/experince.service";
+import { NextFunction, Request, Response } from 'express';
+import { mapVmToDto } from '../mappers/experience.mapper';
+import { ExperienceMv } from '../mappers/types/experience.types';
+import experienceService from '../services/experince.service';
 
 export const getExperiences = async (req: Request, res: Response) => {
   const { skip, take } = req.query;
@@ -19,14 +19,14 @@ export const getExperiences = async (req: Request, res: Response) => {
 export const createExperience = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const experienceMv: ExperienceMv = req.body;
     const experienceDto = mapVmToDto.created(experienceMv);
 
     const createdExperience = await experienceService.createExperience(
-      experienceDto
+      experienceDto,
     );
 
     res.status(200).json(createdExperience);
@@ -37,7 +37,7 @@ export const createExperience = async (
 export const updateExperience = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -48,7 +48,7 @@ export const updateExperience = async (
     const experienceDto = mapVmToDto.updated(experienceMv);
 
     const updatedExperience = await experienceService.updateExperience(
-      experienceDto
+      experienceDto,
     );
 
     res.status(200).json(updatedExperience);
@@ -59,13 +59,13 @@ export const updateExperience = async (
 export const deleteExperience = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
 
     const deletedExperience = await experienceService.deleteExperience(
-      Number(id)
+      Number(id),
     );
 
     if (deletedExperience) {

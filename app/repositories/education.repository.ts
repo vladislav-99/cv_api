@@ -1,8 +1,8 @@
 import {
   EducationCreateEty,
   EducationUpdateEty,
-} from "../mappers/types/education.types";
-import prisma from "../prisma";
+} from '../mappers/types/education.types';
+import prisma from '../prisma';
 
 export default class EducationRepository {
   async createEducation(data: EducationCreateEty) {

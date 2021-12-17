@@ -1,8 +1,8 @@
 import {
   ExperienceCreateEty,
   ExperienceUpdateEty,
-} from "../mappers/types/experience.types";
-import prisma from "../prisma";
+} from '../mappers/types/experience.types';
+import prisma from '../prisma';
 
 export default class ExperienceRepository {
   async createExperience(data: ExperienceCreateEty) {

@@ -1,13 +1,13 @@
-import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/http.exception";
-import { mapDtoToVm, mapVmToDto } from "../mappers/project.mapper";
-import { ProjectVm } from "../mappers/types/porject.types";
-import projectService from "../services/project.service";
+import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/http.exception';
+import { mapDtoToVm, mapVmToDto } from '../mappers/project.mapper';
+import { ProjectVm } from '../mappers/types/porject.types';
+import projectService from '../services/project.service';
 
 export const getAllProjects = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { skip, take } = req.query;
@@ -30,7 +30,7 @@ export const getAllProjects = async (
 export const getProjectById = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -38,7 +38,7 @@ export const getProjectById = async (
     const projectDTO = await projectService.getProjectById(Number(id));
 
     if (!projectDTO) {
-      next(new HttpException(404, "Project is not found"));
+      next(new HttpException(404, 'Project is not found'));
     } else {
       res.json(projectDTO);
     }
@@ -50,7 +50,7 @@ export const getProjectById = async (
 export const createProject = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const projectModel: ProjectVm = req.body;
@@ -69,7 +69,7 @@ export const createProject = async (
 export const updateProject = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -93,7 +93,7 @@ export const updateProject = async (
 export const deleteProject = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -111,6 +111,6 @@ export const deleteProject = async (
     }
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };

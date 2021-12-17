@@ -3,12 +3,12 @@ import {
   ProjectListElEntity,
   ProjectUpdateEntity,
   ProjectWithTechnologiesEntity,
-} from "../mappers/types/porject.types";
-import prisma from "../prisma";
+} from '../mappers/types/porject.types';
+import prisma from '../prisma';
 
 export default class ProjectRepository {
   async createProject(
-    data: ProjectEntity
+    data: ProjectEntity,
   ): Promise<ProjectWithTechnologiesEntity> {
     return await prisma.projects.create({
       data,
@@ -43,7 +43,7 @@ export default class ProjectRepository {
 
   async getProjects(
     skip?: number,
-    take?: number
+    take?: number,
   ): Promise<ProjectListElEntity[]> {
     return await prisma.projects.findMany({
       skip,

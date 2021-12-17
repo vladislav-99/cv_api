@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { mapVmToDto } from "../mappers/education.mapper";
-import { EducationMv } from "../mappers/types/education.types";
-import educationService from "../services/education.service";
+import { NextFunction, Request, Response } from 'express';
+import { mapVmToDto } from '../mappers/education.mapper';
+import { EducationMv } from '../mappers/types/education.types';
+import educationService from '../services/education.service';
 
 export const getEducations = async (req: Request, res: Response) => {
   const { skip, take } = req.query;
@@ -19,14 +19,14 @@ export const getEducations = async (req: Request, res: Response) => {
 export const createEducation = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const educationMv: EducationMv = req.body;
     const educationDto = mapVmToDto.created(educationMv);
 
     const createdEducation = await educationService.createEducation(
-      educationDto
+      educationDto,
     );
 
     res.status(200).json(createdEducation);
@@ -37,7 +37,7 @@ export const createEducation = async (
 export const updateEducation = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -49,7 +49,7 @@ export const updateEducation = async (
     const educationDto = mapVmToDto.updated(educationMv);
 
     const updatedEducation = await educationService.updateEducation(
-      educationDto
+      educationDto,
     );
 
     res.status(200).json(updatedEducation);
@@ -60,7 +60,7 @@ export const updateEducation = async (
 export const deleteEducation = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;

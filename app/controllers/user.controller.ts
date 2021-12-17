@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/http.exception";
-import { mapVmToDto } from "../mappers/user.mapper";
-import userService from "../services/user.service";
+import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/http.exception';
+import { mapVmToDto } from '../mappers/user.mapper';
+import userService from '../services/user.service';
 
 export const getUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -14,7 +14,7 @@ export const getUser = async (
     const user = await userService.getUserById(Number(id));
 
     if (!user) {
-      next(new HttpException(404, "User is not found"));
+      next(new HttpException(404, 'User is not found'));
     } else {
       res.json(user);
     }
@@ -26,7 +26,7 @@ export const getUser = async (
 export const getAllUsers = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { skip, take } = req.query;
@@ -47,7 +47,7 @@ export const getAllUsers = async (
 export const createUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const userBody = mapVmToDto.created(req.body);
@@ -63,7 +63,7 @@ export const createUser = async (
 export const updateUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -83,7 +83,7 @@ export const updateUser = async (
 export const deleteUser = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;

@@ -1,26 +1,26 @@
-import { Projects } from ".prisma/client";
-import HttpException from "../exceptions/http.exception";
-import { mapDtoToEty, mapEtyToDto } from "../mappers/project.mapper";
+import { Projects } from '.prisma/client';
+import HttpException from '../exceptions/http.exception';
+import { mapDtoToEty, mapEtyToDto } from '../mappers/project.mapper';
 import {
   ProjectEtyToDTO,
   ProjectUpdateVmToDto,
   ProjectVmToDto,
   ProjectWithTechnologiesEntity,
-} from "../mappers/types/porject.types";
+} from '../mappers/types/porject.types';
 
-import ProjectRepository from "../repositories/project.repository";
-import { PaginationsProps } from "../types";
+import ProjectRepository from '../repositories/project.repository';
+import { PaginationsProps } from '../types';
+
 class ProjectSevice {
   async getProjectById(id: number): Promise<ProjectEtyToDTO> {
     const projectRepository = new ProjectRepository();
 
-    const projectEntity: ProjectWithTechnologiesEntity | null =
-      await projectRepository.getProject(id).catch((err) => {
-        console.log(err);
-        throw new HttpException(404, "Project is not found");
-      });
+    const projectEntity: ProjectWithTechnologiesEntity | null = await projectRepository.getProject(id).catch((err) => {
+      console.log(err);
+      throw new HttpException(404, 'Project is not found');
+    });
 
-    if (!projectEntity) throw new HttpException(404, "Project is not found");
+    if (!projectEntity) throw new HttpException(404, 'Project is not found');
 
     return mapEtyToDto.project(projectEntity);
   }
@@ -35,7 +35,7 @@ class ProjectSevice {
       .getProjects(skip, take)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot get projects");
+        throw new HttpException(400, 'Cannot get projects');
       });
 
     return projectEntities.map((ety) => mapEtyToDto.project(ety));
@@ -50,14 +50,14 @@ class ProjectSevice {
       .createProject(projectEntity)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot create project");
+        throw new HttpException(400, 'Cannot create project');
       });
 
     return mapEtyToDto.project(createdProjectEntity);
   }
 
   async updateProject(
-    projectDTO: ProjectUpdateVmToDto
+    projectDTO: ProjectUpdateVmToDto,
   ): Promise<ProjectEtyToDTO> {
     const projectEntity = mapDtoToEty.updatedProject(projectDTO);
 
@@ -67,7 +67,7 @@ class ProjectSevice {
       .updateProject(projectEntity)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot update project");
+        throw new HttpException(400, 'Cannot update project');
       });
 
     return mapEtyToDto.project(updatedProjectEntity);
@@ -78,7 +78,7 @@ class ProjectSevice {
 
     return await projectRepository.deleteProject(id).catch((err) => {
       console.log(err);
-      throw new HttpException(404, "Project is not found");
+      throw new HttpException(404, 'Project is not found');
     });
   }
 }

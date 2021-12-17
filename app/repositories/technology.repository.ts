@@ -1,8 +1,8 @@
 import {
   TechnologyCreateEty,
   TechnologyUpdateEty,
-} from "../mappers/types/technology.types";
-import prisma from "../prisma";
+} from '../mappers/types/technology.types';
+import prisma from '../prisma';
 
 export default class TechnologyRepository {
   async createTechnology(data: TechnologyCreateEty) {

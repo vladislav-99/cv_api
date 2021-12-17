@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 import {
   createUser,
@@ -6,35 +6,35 @@ import {
   getAllUsers,
   getUser,
   updateUser,
-} from "../controllers/user.controller";
+} from '../controllers/user.controller';
 import checkRequired, {
   FieldAction,
   RequredFields,
-} from "../middleware/checkRequired.middleware";
+} from '../middleware/checkRequired.middleware';
 
 const router = Router();
 
 // get all users
-router.get("/users", getAllUsers);
+router.get('/users', getAllUsers);
 
 // get user by id
-router.get("/users/:id", getUser);
+router.get('/users/:id', getUser);
 
 // create user
 router.post(
-  "/users",
+  '/users',
   checkRequired([RequredFields.name], FieldAction.create),
-  createUser
+  createUser,
 );
 
 // update user
 router.patch(
-  "/users/:id",
+  '/users/:id',
   checkRequired([RequredFields.name], FieldAction.update),
-  updateUser
+  updateUser,
 );
 
 // delete user
-router.delete("/users/:id", deleteUser);
+router.delete('/users/:id', deleteUser);
 
 export default router;

@@ -3,7 +3,7 @@ import {
   UserInfoEntity,
   UserUpdatedDTO,
   UserVm,
-} from "./types/user.types";
+} from './types/user.types';
 
 export const mapVmToDto = {
   updated: (u: UserVm) => {
@@ -16,14 +16,13 @@ export const mapVmToDto = {
       sphere: u.sphere && u.sphere.trim(),
     };
   },
-  created: ({ id, ...u }: UserVm) => {
-    return {
-      name: u.name && u.name.trim(),
-      description: u.description && u.description.trim(),
-      photo: u.photo,
-      sphere: u.sphere && u.sphere.trim(),
-    };
-  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  created: ({ id, ...u }: UserVm) => ({
+    name: u.name && u.name.trim(),
+    description: u.description && u.description.trim(),
+    photo: u.photo,
+    sphere: u.sphere && u.sphere.trim(),
+  }),
 };
 
 export const mapDtoToEty = {

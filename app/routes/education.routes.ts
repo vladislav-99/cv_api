@@ -1,36 +1,36 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 import {
   getEducations,
   createEducation,
   updateEducation,
   deleteEducation,
-} from "../controllers/education.controller";
+} from '../controllers/education.controller';
 import checkRequired, {
   FieldAction,
   RequredFields,
-} from "../middleware/checkRequired.middleware";
+} from '../middleware/checkRequired.middleware';
 
 const router = Router();
 
 // get all educations
-router.get("/educations", getEducations);
+router.get('/educations', getEducations);
 
 // create education
 router.post(
-  "/educations",
+  '/educations',
   checkRequired([RequredFields.name], FieldAction.create),
-  createEducation
+  createEducation,
 );
 
 // update education
 router.patch(
-  "/educations/:id",
+  '/educations/:id',
   checkRequired([RequredFields.name], FieldAction.update),
-  updateEducation
+  updateEducation,
 );
 
 // delete education
-router.delete("/educations/:id", deleteEducation);
+router.delete('/educations/:id', deleteEducation);
 
 export default router;

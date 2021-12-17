@@ -1,4 +1,4 @@
-import { ExperienceMv } from "./types/experience.types";
+import { ExperienceMv } from './types/experience.types';
 
 export const mapVmToDto = {
   updated: (t: ExperienceMv) => {
@@ -8,9 +8,8 @@ export const mapVmToDto = {
       name: t.name && t.name.trim(),
     };
   },
-  created: ({ id, ...t }: ExperienceMv) => {
-    return {
-      name: t.name!.trim(),
-    };
-  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  created: ({ id, ...t }: ExperienceMv) => ({
+    name: t.name!.trim(),
+  }),
 };

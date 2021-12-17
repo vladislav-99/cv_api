@@ -1,5 +1,5 @@
-import { TechnologyTypes } from "@prisma/client";
-import { mapVmToDto } from "../technology.mapper";
+import { TechnologyTypes } from '@prisma/client';
+import { mapVmToDto } from '../technology.mapper';
 
 export interface TechnologyMv {
   id?: number;

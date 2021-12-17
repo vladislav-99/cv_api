@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 import {
   getAllProjects,
@@ -6,41 +6,41 @@ import {
   updateProject,
   deleteProject,
   getProjectById,
-} from "../controllers/project.controller";
+} from '../controllers/project.controller';
 
 import checkRequired, {
   FieldAction,
   RequredFields,
-} from "../middleware/checkRequired.middleware";
+} from '../middleware/checkRequired.middleware';
 
 const router = Router();
 
 // get all projects
-router.get("/projects", getAllProjects);
+router.get('/projects', getAllProjects);
 
-router.get("/projects/:id", getProjectById);
+router.get('/projects/:id', getProjectById);
 
 // create project
 router.post(
-  "/projects",
+  '/projects',
   checkRequired(
     [RequredFields.name, RequredFields.projectType],
-    FieldAction.create
+    FieldAction.create,
   ),
-  createProject
+  createProject,
 );
 
 // update project
 router.patch(
-  "/projects/:id",
+  '/projects/:id',
   checkRequired(
     [RequredFields.name, RequredFields.projectType],
-    FieldAction.update
+    FieldAction.update,
   ),
-  updateProject
+  updateProject,
 );
 
 // delete project
-router.delete("/projects/:id", deleteProject);
+router.delete('/projects/:id', deleteProject);
 
 export default router;

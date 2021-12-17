@@ -1,14 +1,15 @@
-import { Work_experience } from ".prisma/client";
-import HttpException from "../exceptions/http.exception";
-import { PaginationsProps } from "../types";
-import ExperienceRepository from "../repositories/experience.repository";
+import { Work_experience } from '.prisma/client';
+import HttpException from '../exceptions/http.exception';
+import { PaginationsProps } from '../types';
+import ExperienceRepository from '../repositories/experience.repository';
 import {
   ExperienceCreateDTO,
   ExperienceUpdateDTO,
-} from "../mappers/types/experience.types";
+} from '../mappers/types/experience.types';
+
 class ExperienceSevice {
   async getExperiences({ skip, take }: PaginationsProps) {
-    return await new ExperienceRepository().getExperiences(skip, take);
+    return new ExperienceRepository().getExperiences(skip, take);
   }
 
   async createExperience(experienceData: ExperienceCreateDTO) {
@@ -18,12 +19,12 @@ class ExperienceSevice {
       .createExperience(experienceData)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot create experience");
+        throw new HttpException(400, 'Cannot create experience');
       });
   }
 
   async updateExperience(
-    experienceData: ExperienceUpdateDTO
+    experienceData: ExperienceUpdateDTO,
   ): Promise<Work_experience> {
     const experienceRepository = new ExperienceRepository();
 
@@ -31,7 +32,7 @@ class ExperienceSevice {
       .updateExperience(experienceData)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, "Cannot update experience");
+        throw new HttpException(400, 'Cannot update experience');
       });
   }
 
@@ -40,7 +41,7 @@ class ExperienceSevice {
 
     return experienceRepository.deleteExperience(id).catch((err) => {
       console.log(err.message);
-      throw new HttpException(404, "Experience is not found");
+      throw new HttpException(404, 'Experience is not found');
     });
   }
 }

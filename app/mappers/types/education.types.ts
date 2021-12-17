@@ -1,4 +1,4 @@
-import { mapVmToDto } from "../experience.mapper";
+import { mapVmToDto } from '../experience.mapper';
 
 export interface EducationMv {
   id?: number;

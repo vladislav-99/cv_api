@@ -1,42 +1,42 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 import {
   getTechnologies,
   createTechnology,
   updateTechnology,
   deleteTechnology,
-} from "../controllers/technology.controller";
+} from '../controllers/technology.controller';
 import checkRequired, {
   FieldAction,
   RequredFields,
-} from "../middleware/checkRequired.middleware";
+} from '../middleware/checkRequired.middleware';
 
 const router = Router();
 
 // get all technologies
-router.get("/technologies", getTechnologies);
+router.get('/technologies', getTechnologies);
 
 // create technology
 router.post(
-  "/technologies",
+  '/technologies',
   checkRequired(
     [RequredFields.name, RequredFields.technologyType],
-    FieldAction.create
+    FieldAction.create,
   ),
-  createTechnology
+  createTechnology,
 );
 
 // update technology
 router.patch(
-  "/technologies/:id",
+  '/technologies/:id',
   checkRequired(
     [RequredFields.name, RequredFields.technologyType],
-    FieldAction.update
+    FieldAction.update,
   ),
-  updateTechnology
+  updateTechnology,
 );
 
 // delete technology
-router.delete("/technologies/:id", deleteTechnology);
+router.delete('/technologies/:id', deleteTechnology);
 
 export default router;

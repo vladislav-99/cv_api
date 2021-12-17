@@ -1,4 +1,4 @@
-import { TechnologyMv } from "./types/technology.types";
+import { TechnologyMv } from './types/technology.types';
 
 export const mapVmToDto = {
   updated: (t: TechnologyMv) => {
@@ -9,10 +9,9 @@ export const mapVmToDto = {
       type: t.type,
     };
   },
-  created: ({ id, ...t }: TechnologyMv) => {
-    return {
-      name: t.name!.trim(),
-      type: t.type!,
-    };
-  },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  created: ({ id, ...t }: TechnologyMv) => ({
+    name: t.name!.trim(),
+    type: t.type!,
+  }),
 };

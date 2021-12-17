@@ -1,10 +1,10 @@
-import { User } from ".prisma/client";
-import HttpException from "../exceptions/http.exception";
-import { UserCreatedDTO, UserUpdatedDTO } from "../mappers/types/user.types";
-import { mapDtoToEty, mapEtyToDto } from "../mappers/user.mapper";
-import prisma from "../prisma";
-import UserRepository from "../repositories/user.repository";
-import { PaginationsProps } from "../types";
+import { User } from '.prisma/client';
+import HttpException from '../exceptions/http.exception';
+import { UserCreatedDTO, UserUpdatedDTO } from '../mappers/types/user.types';
+import { mapDtoToEty, mapEtyToDto } from '../mappers/user.mapper';
+import UserRepository from '../repositories/user.repository';
+import { PaginationsProps } from '../types';
+
 
 class UserService {
   async createUser(userData: UserCreatedDTO) {
@@ -14,7 +14,7 @@ class UserService {
 
     return await userRepository.createUser(userEty).catch((err) => {
       console.log(err);
-      throw new HttpException(400, "Cannot create user");
+      throw new HttpException(400, 'Cannot create user');
     });
   }
 
@@ -23,10 +23,10 @@ class UserService {
 
     const userEty = await userRepository.getUser(id).catch((err) => {
       console.log(err);
-      throw new HttpException(404, "User is not found");
+      throw new HttpException(404, 'User is not found');
     });
 
-    if (!userEty) throw new HttpException(404, "User is not found");
+    if (!userEty) throw new HttpException(404, 'User is not found');
 
     return mapEtyToDto.userInfo(userEty);
   }
@@ -42,7 +42,7 @@ class UserService {
 
     return await userRepository.updateUser(userEty).catch((err) => {
       console.log(err);
-      throw new HttpException(400, "Cannot update user");
+      throw new HttpException(400, 'Cannot update user');
     });
   }
 
@@ -51,7 +51,7 @@ class UserService {
 
     return await userRepository.deleteUser(id).catch((err) => {
       console.log(err);
-      throw new HttpException(404, "User is not found");
+      throw new HttpException(404, 'User is not found');
     });
   }
 }

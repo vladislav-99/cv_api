@@ -1,12 +1,12 @@
-import { ProjectTypes, Projects, Technologies } from ".prisma/client";
+import { ProjectTypes, Projects, Technologies } from '.prisma/client';
 import {
   mapDtoToEty,
   mapDtoToVm,
   mapEtyToDto,
   mapVmToDto,
-} from "../project.mapper";
+} from '../project.mapper';
 
-//VM
+// VM
 export interface ProjectVm {
   id?: number | string;
   description?: string;
@@ -18,12 +18,12 @@ export interface ProjectVm {
 }
 export type ProjectElVm = ReturnType<typeof mapDtoToVm.listProjects>;
 
-//DTO
+// DTO
 export type ProjectVmToDto = ReturnType<typeof mapVmToDto.createdProject>;
 export type ProjectUpdateVmToDto = ReturnType<typeof mapVmToDto.updatedProject>;
 export type ProjectEtyToDTO = ReturnType<typeof mapEtyToDto.project>;
 
-//ETY
+// ETY
 export type ProjectEntity = ReturnType<typeof mapDtoToEty.createdProject>;
 export type ProjectUpdateEntity = ReturnType<typeof mapDtoToEty.updatedProject>;
 
@@ -33,6 +33,6 @@ export type ProjectWithTechnologiesEntity =
     };
 
 export type ProjectListElEntity =
-  | Pick<Projects, "id" | "name" | "type" | "country"> & {
+  | Pick<Projects, 'id' | 'name' | 'type' | 'country'> & {
       project_technologies: { technology: Technologies }[];
     };

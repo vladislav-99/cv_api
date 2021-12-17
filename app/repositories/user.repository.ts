@@ -2,8 +2,8 @@ import {
   UserCreatedEty,
   UserInfoEntity,
   UserUpdatedEty,
-} from "../mappers/types/user.types";
-import prisma from "../prisma";
+} from '../mappers/types/user.types';
+import prisma from '../prisma';
 
 export default class UserRepository {
   async createUser(data: UserCreatedEty) {

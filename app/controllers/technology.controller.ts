@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/http.exception";
-import { mapVmToDto } from "../mappers/technology.mapper";
-import { TechnologyMv } from "../mappers/types/technology.types";
-import technologyService from "../services/technology.service";
+import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/http.exception';
+import { mapVmToDto } from '../mappers/technology.mapper';
+import { TechnologyMv } from '../mappers/types/technology.types';
+import technologyService from '../services/technology.service';
 
 export const getTechnologies = async (req: Request, res: Response) => {
   const technologies = await technologyService.getTechnologies();
@@ -13,7 +13,7 @@ export const getTechnologies = async (req: Request, res: Response) => {
 export const createTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const technologyModel: TechnologyMv = req.body;
@@ -28,14 +28,14 @@ export const createTechnology = async (
     res.status(200).json(technology);
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };
 
 export const updateTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -55,14 +55,14 @@ export const updateTechnology = async (
     res.status(200).json(updatedTechnology);
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };
 
 export const deleteTechnology = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -80,6 +80,6 @@ export const deleteTechnology = async (
     }
   } catch (error) {
     console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(new HttpException(500, 'Something went wrong'));
   }
 };
