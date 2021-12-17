@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { toTechnology } from "./mappers/toDTO/tecnology.mapper";
+import { mapVmToDto } from "../mappers/technology.mapper";
+import { TechnologyMv } from "../mappers/types/technology.types";
 import technologyService from "../services/technology.service";
 
 export const getTechnologies = async (req: Request, res: Response) => {
@@ -15,14 +16,11 @@ export const createTechnology = async (
   next: NextFunction
 ) => {
   try {
-    const technologyBody = toTechnology(req.body);
-
-    if (req.body.type && !technologyBody.type) {
-      return next(new HttpException(400, "type's value is wrong"));
-    }
+    const technologyModel: TechnologyMv = req.body;
+    const technologyDto = mapVmToDto.created(technologyModel);
 
     const technology = await technologyService
-      .createTechnology(technologyBody)
+      .createTechnology(technologyDto)
       .catch((err) => {
         next(err);
       });
@@ -41,17 +39,15 @@ export const updateTechnology = async (
 ) => {
   try {
     const { id } = req.params;
-    const userBody = toTechnology({
+
+    const technologyModel: TechnologyMv = {
       id,
       ...req.body,
-    });
-
-    if (!userBody.name && !userBody.type) {
-      return next(new HttpException(400, "Fields values are wrong"));
-    }
+    };
+    const technologyDto = mapVmToDto.updated(technologyModel);
 
     const updatedTechnology = await technologyService
-      .updateTechnology(userBody)
+      .updateTechnology(technologyDto)
       .catch((err) => {
         next(err);
       });

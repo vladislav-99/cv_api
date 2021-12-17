@@ -1,36 +1,17 @@
 import { Projects } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
+import { mapDtoToEty, mapEtyToDto } from "../mappers/project.mapper";
 import {
-  ProjectDTO,
-  ProjectListElDTO,
-} from "../repositories/mappers/toDTO/types";
-import prisma from "../prisma";
-import {
-  mapPojectToEntity,
-  mapUpdatedPojectToEntity,
-} from "../repositories/mappers/toEntity/project.mapper";
-import ProjectRepository from "../repositories/project.repository";
-import {
-  ProjectEntity,
-  ProjectListElEntity,
-  ProjectUpdateEntity,
+  ProjectEtyToDTO,
+  ProjectUpdateVmToDto,
+  ProjectVmToDto,
   ProjectWithTechnologiesEntity,
-} from "../repositories/mappers/toEntity/types";
-import {
-  mapProjectFromEntityToDTO,
-  mapProjectListElToDTO,
-} from "../repositories/mappers/toDTO/project.mapper";
-import {
-  ProjectDTO as FromVMProjectDTO,
-  ProjectUpdateDTO,
-} from "../controllers/mappers/toDTO/types";
+} from "../mappers/types/porject.types";
 
-type GetProjectsProps = {
-  skip?: number;
-  take?: number;
-};
+import ProjectRepository from "../repositories/project.repository";
+import { PaginationsProps } from "../types";
 class ProjectSevice {
-  async getProjectById(id: number): Promise<ProjectDTO> {
+  async getProjectById(id: number): Promise<ProjectEtyToDTO> {
     const projectRepository = new ProjectRepository();
 
     const projectEntity: ProjectWithTechnologiesEntity | null =
@@ -41,80 +22,64 @@ class ProjectSevice {
 
     if (!projectEntity) throw new HttpException(404, "Project is not found");
 
-    const createdProjectDTO: ProjectDTO =
-      mapProjectFromEntityToDTO(projectEntity);
-
-    return createdProjectDTO;
+    return mapEtyToDto.project(projectEntity);
   }
 
   async getProjects({
     skip,
     take,
-  }: GetProjectsProps): Promise<ProjectListElDTO[]> {
+  }: PaginationsProps): Promise<ProjectEtyToDTO[]> {
     const projectRepository = new ProjectRepository();
 
-    const projectEntities: ProjectListElEntity[] = await projectRepository
+    const projectEntities = await projectRepository
       .getProjects(skip, take)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot get projects");
       });
 
-    const createdProjectDTOs: ProjectListElDTO[] = projectEntities.map((ety) =>
-      mapProjectListElToDTO(ety)
-    );
-
-    return createdProjectDTOs;
+    return projectEntities.map((ety) => mapEtyToDto.project(ety));
   }
 
-  async createProject(projectDTO: FromVMProjectDTO): Promise<ProjectDTO> {
-    const projectEntity: ProjectEntity = mapPojectToEntity(projectDTO);
+  async createProject(projectDTO: ProjectVmToDto): Promise<ProjectEtyToDTO> {
+    const projectEntity = mapDtoToEty.createdProject(projectDTO);
 
     const projectRepository = new ProjectRepository();
 
-    const createdProjectEntity: ProjectWithTechnologiesEntity =
-      await projectRepository.createProject(projectEntity).catch((err) => {
+    const createdProjectEntity = await projectRepository
+      .createProject(projectEntity)
+      .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot create project");
       });
 
-    const createdProjectDTO: ProjectDTO =
-      mapProjectFromEntityToDTO(createdProjectEntity);
-
-    return createdProjectDTO;
+    return mapEtyToDto.project(createdProjectEntity);
   }
 
-  async updateProject(projectDTO: ProjectUpdateDTO): Promise<ProjectDTO> {
-    const projectUpdateEntity: ProjectUpdateEntity =
-      mapUpdatedPojectToEntity(projectDTO);
+  async updateProject(
+    projectDTO: ProjectUpdateVmToDto
+  ): Promise<ProjectEtyToDTO> {
+    const projectEntity = mapDtoToEty.updatedProject(projectDTO);
 
     const projectRepository = new ProjectRepository();
 
-    const updatedProjectEntity: ProjectWithTechnologiesEntity =
-      await projectRepository
-        .updateProject(projectUpdateEntity)
-        .catch((err) => {
-          console.log(err);
-          throw new HttpException(400, "Cannot update project");
-        });
+    const updatedProjectEntity = await projectRepository
+      .updateProject(projectEntity)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(400, "Cannot update project");
+      });
 
-    const createdProjectDTO: ProjectDTO =
-      mapProjectFromEntityToDTO(updatedProjectEntity);
-
-    return createdProjectDTO;
+    return mapEtyToDto.project(updatedProjectEntity);
   }
 
   async deleteProject(id: number): Promise<Projects | null> {
-    return await prisma.projects
-      .delete({
-        where: {
-          id,
-        },
-      })
-      .catch((err) => {
-        console.log(err);
-        throw new HttpException(404, "Project is not found");
-      });
+    const projectRepository = new ProjectRepository();
+
+    return await projectRepository.deleteProject(id).catch((err) => {
+      console.log(err);
+      throw new HttpException(404, "Project is not found");
+    });
   }
 }
 

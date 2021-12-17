@@ -1,11 +1,10 @@
-import { Projects } from "@prisma/client";
-import prisma from "../prisma";
 import {
   ProjectEntity,
   ProjectListElEntity,
-  ProjectWithTechnologiesEntity,
   ProjectUpdateEntity,
-} from "./mappers/toEntity/types";
+  ProjectWithTechnologiesEntity,
+} from "../mappers/types/porject.types";
+import prisma from "../prisma";
 
 export default class ProjectRepository {
   async createProject(
@@ -76,5 +75,9 @@ export default class ProjectRepository {
         },
       },
     });
+  }
+
+  async deleteProject(id: number) {
+    return await prisma.projects.delete({ where: { id } });
   }
 }

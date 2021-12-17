@@ -6,6 +6,10 @@ import {
   updateTechnology,
   deleteTechnology,
 } from "../controllers/technology.controller";
+import checkRequired, {
+  FieldAction,
+  RequredFields,
+} from "../middleware/checkRequired.middleware";
 
 const router = Router();
 
@@ -13,10 +17,24 @@ const router = Router();
 router.get("/technologies", getTechnologies);
 
 // create technology
-router.post("/technologies", createTechnology);
+router.post(
+  "/technologies",
+  checkRequired(
+    [RequredFields.name, RequredFields.technologyType],
+    FieldAction.create
+  ),
+  createTechnology
+);
 
 // update technology
-router.put("/technologies/:id", updateTechnology);
+router.patch(
+  "/technologies/:id",
+  checkRequired(
+    [RequredFields.name, RequredFields.technologyType],
+    FieldAction.update
+  ),
+  updateTechnology
+);
 
 // delete technology
 router.delete("/technologies/:id", deleteTechnology);

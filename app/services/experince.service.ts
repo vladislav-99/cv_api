@@ -1,32 +1,21 @@
 import { Work_experience } from ".prisma/client";
 import HttpException from "../exceptions/http.exception";
-import { ExperienceDTO } from "../controllers/mappers/toDTO/types";
-import prisma from "../prisma";
-
+import { PaginationsProps } from "../types";
+import ExperienceRepository from "../repositories/experience.repository";
+import {
+  ExperienceCreateDTO,
+  ExperienceUpdateDTO,
+} from "../mappers/types/experience.types";
 class ExperienceSevice {
-  async getAllExperiences(): Promise<Work_experience[]> {
-    return await prisma.work_experience.findMany();
+  async getExperiences({ skip, take }: PaginationsProps) {
+    return await new ExperienceRepository().getExperiences(skip, take);
   }
 
-  async createExperience(
-    experienceDara: ExperienceDTO
-  ): Promise<Work_experience> {
-    const { name } = experienceDara;
+  async createExperience(experienceData: ExperienceCreateDTO) {
+    const experienceRepository = new ExperienceRepository();
 
-    if (!name || (name && !name.trim()) || name === undefined) {
-      throw new HttpException(400, "'name' field is reqired");
-    }
-
-    // const prismaEty =  {name};
-
-    // const experienceRepository = new ExperienceRepository();
-
-    // await experienceRepository.createExperience(prismaEty);
-
-    return await prisma.work_experience
-      .create({
-        data: experienceDara,
-      })
+    return await experienceRepository
+      .createExperience(experienceData)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot create experience");
@@ -34,22 +23,12 @@ class ExperienceSevice {
   }
 
   async updateExperience(
-    experienceDara: Partial<ExperienceDTO>
+    experienceData: ExperienceUpdateDTO
   ): Promise<Work_experience> {
-    const { id, ...updatingData } = experienceDara;
-    const { name } = updatingData;
+    const experienceRepository = new ExperienceRepository();
 
-    if (name !== undefined && !name) {
-      throw new HttpException(400, "name field cannot be empty");
-    }
-
-    return await prisma.work_experience
-      .update({
-        where: {
-          id,
-        },
-        data: updatingData,
-      })
+    return experienceRepository
+      .updateExperience(experienceData)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, "Cannot update experience");
@@ -57,18 +36,12 @@ class ExperienceSevice {
   }
 
   async deleteExperience(id: number): Promise<Work_experience | null> {
-    if (isNaN(id)) throw new HttpException(400, "Incorrect Id field");
+    const experienceRepository = new ExperienceRepository();
 
-    return await prisma.work_experience
-      .delete({
-        where: {
-          id,
-        },
-      })
-      .catch((err) => {
-        console.log(err.message);
-        throw new HttpException(404, "Experience is not found");
-      });
+    return experienceRepository.deleteExperience(id).catch((err) => {
+      console.log(err.message);
+      throw new HttpException(404, "Experience is not found");
+    });
   }
 }
 

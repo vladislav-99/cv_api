@@ -7,6 +7,10 @@ import {
   getUser,
   updateUser,
 } from "../controllers/user.controller";
+import checkRequired, {
+  FieldAction,
+  RequredFields,
+} from "../middleware/checkRequired.middleware";
 
 const router = Router();
 
@@ -17,10 +21,18 @@ router.get("/users", getAllUsers);
 router.get("/users/:id", getUser);
 
 // create user
-router.post("/users", createUser);
+router.post(
+  "/users",
+  checkRequired([RequredFields.name], FieldAction.create),
+  createUser
+);
 
 // update user
-router.put("/users/:id", updateUser);
+router.patch(
+  "/users/:id",
+  checkRequired([RequredFields.name], FieldAction.update),
+  updateUser
+);
 
 // delete user
 router.delete("/users/:id", deleteUser);

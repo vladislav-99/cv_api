@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import { toUser } from "./mappers/toDTO/user.mapper";
+import { mapVmToDto } from "../mappers/user.mapper";
 import userService from "../services/user.service";
 
 export const getUser = async (
@@ -11,9 +11,7 @@ export const getUser = async (
   try {
     const { id } = req.params;
 
-    const user = await userService.getUserById(Number(id)).catch((err) => {
-      next(err);
-    });
+    const user = await userService.getUserById(Number(id));
 
     if (!user) {
       next(new HttpException(404, "User is not found"));
@@ -21,8 +19,7 @@ export const getUser = async (
       res.json(user);
     }
   } catch (error) {
-    console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(error);
   }
 };
 
@@ -32,14 +29,18 @@ export const getAllUsers = async (
   next: NextFunction
 ) => {
   try {
-    const users = await userService.getAllUsers().catch((err) => {
-      next(err);
-    });
+    const { skip, take } = req.query;
+
+    const options = {
+      skip: skip ? Number(skip) : undefined,
+      take: take ? Number(take) : undefined,
+    };
+
+    const users = await userService.getAllUsers(options);
 
     res.json(users);
   } catch (error) {
-    console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(error);
   }
 };
 
@@ -49,16 +50,13 @@ export const createUser = async (
   next: NextFunction
 ) => {
   try {
-    const userBody = toUser(req.body);
+    const userBody = mapVmToDto.created(req.body);
 
-    const createdUser = await userService.createUser(userBody).catch((err) => {
-      next(err);
-    });
+    const createdUser = await userService.createUser(userBody);
 
     res.status(200).json(createdUser);
   } catch (error) {
-    console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(error);
   }
 };
 
@@ -69,19 +67,16 @@ export const updateUser = async (
 ) => {
   try {
     const { id } = req.params;
-    const userBody = toUser({
+    const userBody = mapVmToDto.updated({
       id,
       ...req.body,
     });
 
-    const updatedUser = await userService.updateUser(userBody).catch((err) => {
-      next(err);
-    });
+    const updatedUser = await userService.updateUser(userBody);
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(error);
   }
 };
 
@@ -93,11 +88,7 @@ export const deleteUser = async (
   try {
     const { id } = req.params;
 
-    const deletedUser = await userService
-      .deleteUser(Number(id))
-      .catch((err) => {
-        next(err);
-      });
+    const deletedUser = await userService.deleteUser(Number(id));
 
     if (deletedUser) {
       res.json({ success: true, deletedUser });
@@ -105,7 +96,6 @@ export const deleteUser = async (
       res.status(400).json({ success: false });
     }
   } catch (error) {
-    console.log(error);
-    next(new HttpException(500, "Something went wrong"));
+    next(error);
   }
 };

@@ -1,22 +1,34 @@
 import { Router } from "express";
 
 import {
-  getAllExperiences,
+  getExperiences,
   createExperience,
   updateExperience,
   deleteExperience,
 } from "../controllers/experience.controller";
+import checkRequired, {
+  FieldAction,
+  RequredFields,
+} from "../middleware/checkRequired.middleware";
 
 const router = Router();
 
 // get all experiences
-router.get("/experiences", getAllExperiences);
+router.get("/experiences", getExperiences);
 
 // create experience
-router.post("/experiences", createExperience);
+router.post(
+  "/experiences",
+  checkRequired([RequredFields.name], FieldAction.create),
+  createExperience
+);
 
 // update experience
-router.put("/experiences/:id", updateExperience);
+router.patch(
+  "/experiences/:id",
+  checkRequired([RequredFields.name], FieldAction.update),
+  updateExperience
+);
 
 // delete experience
 router.delete("/experiences/:id", deleteExperience);

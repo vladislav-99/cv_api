@@ -1,25 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import HttpException from "../exceptions/http.exception";
-import {
-  ProjectDTO,
-  ProjectListElDTO,
-} from "../repositories/mappers/toDTO/types";
-import {
-  ProjectDTO as FromVMProjectDTO,
-  ProjectUpdateDTO,
-} from "./mappers/toDTO/types";
-
+import { mapDtoToVm, mapVmToDto } from "../mappers/project.mapper";
+import { ProjectVm } from "../mappers/types/porject.types";
 import projectService from "../services/project.service";
-import {
-  toProjectDTO,
-  toProjectUpdateDTO,
-} from "./mappers/toDTO/project.mapper";
-import {
-  ProjectListElVM,
-  ProjectVM,
-  ProjectVMFromDTO,
-} from "./mappers/toVM/types";
-import { toProjectListElVM, toProjectVM } from "./mappers/toVM/project.mapper";
 
 export const getAllProjects = async (
   req: Request,
@@ -34,13 +17,9 @@ export const getAllProjects = async (
       take: take ? Number(take) : undefined,
     };
 
-    const projects: ProjectListElDTO[] = await projectService.getProjects(
-      options
-    );
+    const projects = await projectService.getProjects(options);
 
-    const projectsList: ProjectListElVM[] = projects.map((p) =>
-      toProjectListElVM(p)
-    );
+    const projectsList = projects.map((p) => mapDtoToVm.listProjects(p));
 
     res.json(projectsList);
   } catch (error) {
@@ -56,9 +35,7 @@ export const getProjectById = async (
   try {
     const { id } = req.params;
 
-    const projectDTO: ProjectDTO | null = await projectService.getProjectById(
-      Number(id)
-    );
+    const projectDTO = await projectService.getProjectById(Number(id));
 
     if (!projectDTO) {
       next(new HttpException(404, "Project is not found"));
@@ -76,14 +53,12 @@ export const createProject = async (
   next: NextFunction
 ) => {
   try {
-    const projectModel: ProjectVM = req.body;
-    const projectDTO: FromVMProjectDTO = toProjectDTO(projectModel);
+    const projectModel: ProjectVm = req.body;
+    const projectDTO = mapVmToDto.createdProject(projectModel);
 
-    const createdProject: ProjectDTO = await projectService.createProject(
-      projectDTO
-    );
+    const createdProject = await projectService.createProject(projectDTO);
 
-    const projectVM: ProjectVMFromDTO = toProjectVM(createdProject);
+    const projectVM = mapDtoToVm.project(createdProject);
 
     res.status(200).json(projectVM);
   } catch (error) {
@@ -98,18 +73,16 @@ export const updateProject = async (
 ) => {
   try {
     const { id } = req.params;
-    const projectModel: ProjectVM = {
+    const projectModel: ProjectVm = {
       id,
       ...req.body,
     };
 
-    const projectDTO: ProjectUpdateDTO = toProjectUpdateDTO(projectModel);
+    const projectDTO = mapVmToDto.updatedProject(projectModel);
 
-    const updatedProject: ProjectDTO = await projectService.updateProject(
-      projectDTO
-    );
+    const updatedProject = await projectService.updateProject(projectDTO);
 
-    const projectVM: ProjectVMFromDTO = toProjectVM(updatedProject);
+    const projectVM = mapDtoToVm.project(updatedProject);
 
     res.status(200).json(projectVM);
   } catch (error) {

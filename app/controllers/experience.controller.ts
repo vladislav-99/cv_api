@@ -1,24 +1,35 @@
 import { NextFunction, Request, Response } from "express";
-import HttpException from "../exceptions/http.exception";
-import { ExperienceDTO } from "./mappers/toDTO/types";
+import { mapVmToDto } from "../mappers/experience.mapper";
+import { ExperienceMv } from "../mappers/types/experience.types";
 import experienceService from "../services/experince.service";
 
-export const getAllExperiences = async (req: Request, res: Response) => {
-  const experiences = await experienceService.getAllExperiences();
+export const getExperiences = async (req: Request, res: Response) => {
+  const { skip, take } = req.query;
+
+  const options = {
+    skip: skip ? Number(skip) : undefined,
+    take: take ? Number(take) : undefined,
+  };
+
+  const experiences = await experienceService.getExperiences(options);
 
   res.status(200).json(experiences);
 };
+
 export const createExperience = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    // const experience: experineceType = toExperience(req.body);
-    // const createdExperience = await experienceService.createExperience(
-    //   experienceBody
-    // );
-    // res.status(200).json(createdExperience);
+    const experienceMv: ExperienceMv = req.body;
+    const experienceDto = mapVmToDto.created(experienceMv);
+
+    const createdExperience = await experienceService.createExperience(
+      experienceDto
+    );
+
+    res.status(200).json(createdExperience);
   } catch (error) {
     next(error);
   }
@@ -30,13 +41,14 @@ export const updateExperience = async (
 ) => {
   try {
     const { id } = req.params;
-    const projectModel: ExperienceDTO = {
+    const experienceMv: ExperienceMv = {
       id,
       ...req.body,
     };
+    const experienceDto = mapVmToDto.updated(experienceMv);
 
     const updatedExperience = await experienceService.updateExperience(
-      projectModel
+      experienceDto
     );
 
     res.status(200).json(updatedExperience);
