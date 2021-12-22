@@ -3,7 +3,7 @@
   "license": "MIT",
   "scripts": {
     "build": "prisma generate",
-    "start": "node dist/server.ts",
+    "start": "node dist/server.js",
     "dev": "nodemon --delay 500ms app/server.ts",
     "fix": "eslint --ext .ts app/ --fix",
     "postinstall": "tsc"
