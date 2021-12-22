@@ -3,9 +3,10 @@
   "license": "MIT",
   "scripts": {
     "build": "prisma generate",
-    "start": "ts-node app/server.ts",
+    "start": "node dist/server.ts",
     "dev": "nodemon --delay 500ms app/server.ts",
-    "fix": "eslint --ext .ts app/ --fix"
+    "fix": "eslint --ext .ts app/ --fix",
+    "postinstall": "tsc"
   },
   "dependencies": {
     "@prisma/client": "3.5.0",
