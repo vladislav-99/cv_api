@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import connectRouter from './app/routes';
-import errorMiddleware from './app/middleware/error.middleware';
+import connectRouter from './routes';
+import errorMiddleware from './middleware/error.middleware';
 
 const app = express();
 

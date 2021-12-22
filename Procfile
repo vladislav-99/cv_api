@@ -1,3 +1,3 @@
-web: npm start
+web:ts-node/app/server.ts
 
 release: npx prisma migrate deploy
