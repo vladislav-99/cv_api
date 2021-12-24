@@ -34,6 +34,15 @@ export default class ExperienceRepository {
     });
   }
 
+  async getLastCreatedExperiences(count: number) {
+    return await prisma.work_experience.findMany({
+      take: count,
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
   async getExperience(id: number) {
     return await prisma.work_experience.findFirst({
       where: {

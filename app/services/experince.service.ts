@@ -26,12 +26,18 @@ class ExperienceSevice {
   async createManyExperiences(experiencesData: ExperienceCreateDTO[]) {
     const experienceRepository = new ExperienceRepository();
 
-    return await experienceRepository
+    const newExperienceCount = await experienceRepository
       .createManyExperiences(experiencesData)
       .catch((err) => {
         console.log(err);
         throw new HttpException(400, 'Cannot create experience');
       });
+
+    if (newExperienceCount.count) {
+      return await experienceRepository.getLastCreatedExperiences(newExperienceCount.count);
+    } else {
+      throw new HttpException(400, 'Cannot create experiences');
+    }
   }
 
   async updateExperience(
