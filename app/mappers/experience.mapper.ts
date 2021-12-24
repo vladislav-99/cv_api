@@ -11,5 +11,10 @@ export const mapVmToDto = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   created: ({ id, ...t }: ExperienceMv) => ({
     name: t.name!.trim(),
-  }),
+  })
+  ,createdMany: (experiences: string[]) => (
+    experiences.filter((value, index, self) => self.indexOf(value) === index).map(experience => ({
+      name: experience
+    }))
+  ),
 };

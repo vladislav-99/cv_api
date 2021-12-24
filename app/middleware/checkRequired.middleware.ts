@@ -4,6 +4,7 @@ import HttpException from '../exceptions/http.exception';
 
 export enum RequredFields {
   name,
+  experiences,
   projectType,
   technologyType,
 }
@@ -32,51 +33,74 @@ function checkType<T, E>(
   return null;
 }
 
-const checkRequired = (fields: RequredFields[], typeField?: FieldAction) => (req: Request, res: Response, next: NextFunction) => {
-  let error: null | HttpException = null;
-  fields.some((reqiredField) => {
-    switch (reqiredField) {
-    case RequredFields.name: {
-      const { name } = req.body;
+function isValidName<T extends string>(name: T | undefined): boolean {
 
-      const isNotUndefinedButEmpty = name !== undefined && !name;
+  const isNotUndefinedButEmpty = name !== undefined && !name;
 
-      const isEmpty = isNotUndefinedButEmpty || (name && !name.trim());
+  const isEmpty = isNotUndefinedButEmpty || (name && !name.trim());
 
-      if (typeField === FieldAction.create) {
-        if (!name || isEmpty) {
-          error = new HttpException(400, "'name' field is reqired");
+  if (!name || isEmpty) {
+    return false;
+  }
+  return true;
+}
+
+const checkRequired = (fields: RequredFields[], typeField?: FieldAction) => 
+  (req: Request, res: Response, next: NextFunction) => {
+    let error: null | HttpException = null;
+    fields.some((reqiredField) => {
+      switch (reqiredField) {
+      case RequredFields.name: {
+        const { name } = req.body;
+
+        const isNotUndefinedButEmpty = name !== undefined && !name;
+
+        const isEmpty = isNotUndefinedButEmpty || (name && !name.trim());
+
+        if (typeField === FieldAction.create) {
+          if (!name || isEmpty) {
+            error = new HttpException(400, "'name' field is reqired");
+          }
         }
+
+        if (typeField === FieldAction.update) {
+          if (isEmpty) {
+            error = new HttpException(400, "'name' field cannot be empty");
+          }
+        }
+        break;
       }
 
-      if (typeField === FieldAction.update) {
-        if (isEmpty) {
-          error = new HttpException(400, "'name' field cannot be empty");
-        }
+      case RequredFields.projectType: {
+        const { type }: { type: ProjectTypes } = req.body;
+        error = checkType(type, ProjectTypes, typeField);
+        break;
       }
-      break;
-    }
 
-    case RequredFields.projectType: {
-      const { type }: { type: ProjectTypes } = req.body;
-      error = checkType(type, ProjectTypes, typeField);
-      break;
-    }
+      case RequredFields.technologyType: {
+        const { type }: { type: TechnologyTypes } = req.body;
+        error = checkType(type, TechnologyTypes, typeField);
+        break;
+      }
 
-    case RequredFields.technologyType: {
-      const { type }: { type: TechnologyTypes } = req.body;
-      error = checkType(type, TechnologyTypes, typeField);
-      break;
-    }
-    default: {
-      error = null;
-    }
-    }
-    return !!error;
-  });
+      case RequredFields.experiences: {
+        const { experiences }: { experiences: string[] } = req.body;
+        experiences.forEach(e => {
+          const isValid = isValidName(e);
+          if (!isValid) error = new HttpException(400, "'experiences' is not valid");
+        });
+        break;
+      }
 
-  if (error) next(error);
-  else next();
-};
+      default: {
+        error = null;
+      }
+      }
+      return !!error;
+    });
+
+    if (error) next(error);
+    else next();
+  };
 
 export default checkRequired;

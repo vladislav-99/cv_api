@@ -11,6 +11,13 @@ export default class ExperienceRepository {
     });
   }
 
+  async createManyExperiences(data: ExperienceCreateEty[]) {
+    return await prisma.work_experience.createMany({
+      data,
+      skipDuplicates: true
+    });
+  }
+
   async updateExperience({ id, ...data }: ExperienceUpdateEty) {
     return await prisma.work_experience.update({
       where: {

@@ -23,6 +23,17 @@ class ExperienceSevice {
       });
   }
 
+  async createManyExperiences(experiencesData: ExperienceCreateDTO[]) {
+    const experienceRepository = new ExperienceRepository();
+
+    return await experienceRepository
+      .createManyExperiences(experiencesData)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(400, 'Cannot create experience');
+      });
+  }
+
   async updateExperience(
     experienceData: ExperienceUpdateDTO,
   ): Promise<Work_experience> {

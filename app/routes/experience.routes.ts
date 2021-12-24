@@ -5,6 +5,7 @@ import {
   createExperience,
   updateExperience,
   deleteExperience,
+  createExperiences,
 } from '../controllers/experience.controller';
 import checkRequired, {
   FieldAction,
@@ -21,6 +22,11 @@ router.post(
   '/experiences',
   checkRequired([RequredFields.name], FieldAction.create),
   createExperience,
+);
+router.post(
+  '/experiences/add-many',
+  checkRequired([RequredFields.experiences], FieldAction.create),
+  createExperiences,
 );
 
 // update experience

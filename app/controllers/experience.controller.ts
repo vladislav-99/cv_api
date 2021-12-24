@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/http.exception';
 import { mapVmToDto } from '../mappers/experience.mapper';
 import { ExperienceMv } from '../mappers/types/experience.types';
 import experienceService from '../services/experince.service';
@@ -34,6 +35,26 @@ export const createExperience = async (
     next(error);
   }
 };
+
+export const createExperiences = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const experiencesMv: {experiences: string[]} = req.body;
+    const experiencesDto = mapVmToDto.createdMany(experiencesMv.experiences);
+
+    const createdExperiences = await experienceService.createManyExperiences(
+      experiencesDto,
+    );
+
+    res.status(200).json(createdExperiences);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateExperience = async (
   req: Request,
   res: Response,
@@ -63,7 +84,7 @@ export const deleteExperience = async (
 ) => {
   try {
     const { id } = req.params;
-
+    
     const deletedExperience = await experienceService.deleteExperience(
       Number(id),
     );
