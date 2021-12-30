@@ -9,6 +9,12 @@ export default class TechnologyRepository {
     return await prisma.technologies.create({
       data,
     });
+  } 
+  
+  async createTechnologies(data: TechnologyCreateEty[]) {
+    return await prisma.technologies.createMany({
+      data,
+    });
   }
 
   async updateTechnology({ id, ...data }: TechnologyUpdateEty) {
@@ -31,6 +37,15 @@ export default class TechnologyRepository {
     return await prisma.technologies.findFirst({
       where: {
         id,
+      },
+    });
+  }
+
+  async getLastCreatedTechnologies(count: number) {
+    return await prisma.technologies.findMany({
+      take: count,
+      orderBy: {
+        id: 'desc',
       },
     });
   }

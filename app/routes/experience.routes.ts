@@ -23,9 +23,10 @@ router.post(
   checkRequired([RequredFields.name], FieldAction.create),
   createExperience,
 );
+
 router.post(
   '/experiences/add-many',
-  checkRequired([RequredFields.experiences], FieldAction.create),
+  checkRequired([RequredFields.experiences]),
   createExperiences,
 );
 

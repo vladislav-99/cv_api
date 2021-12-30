@@ -11,6 +11,22 @@ export default class EducationRepository {
     });
   }
 
+  async createManyEducations(data: EducationCreateEty[]) {
+    return await prisma.education.createMany({
+      data,
+      skipDuplicates: true
+    });
+  }
+
+  async getLastCreatedEducations(count: number) {
+    return await prisma.education.findMany({
+      take: count,
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
   async updateEducation({ id, ...data }: EducationUpdateEty) {
     return await prisma.education.update({
       where: {

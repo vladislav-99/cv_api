@@ -25,6 +25,25 @@ class TechnologyService {
       });
   }
 
+  async createManyTechnologies(
+    technologiesData: TechnologyCreateDTO[],
+  ): Promise<Technologies[]> {
+    const technologyRepository = new TechnologyRepository();
+
+    const newTechnologiesCount = await technologyRepository
+      .createTechnologies(technologiesData)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(400, 'Cannot create technology');
+      });
+
+    if (newTechnologiesCount.count) {
+      return await technologyRepository.getLastCreatedTechnologies(newTechnologiesCount.count);
+    } else {
+      throw new HttpException(400, 'Cannot create experiences');
+    }
+  }
+
   async updateTechnology(
     technologyData: TechnologyUpdateDTO,
   ): Promise<Technologies> {

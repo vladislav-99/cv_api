@@ -34,6 +34,26 @@ export const createEducation = async (
     next(error);
   }
 };
+
+export const createEducations = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const educationsMv: {educations: string[]} = req.body;
+    const educationsDto = mapVmToDto.createdMany(educationsMv.educations);
+
+    const createdEducations = await educationService.createManyEducation(
+      educationsDto,
+    );
+
+    res.status(200).json(createdEducations);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const updateEducation = async (
   req: Request,
   res: Response,

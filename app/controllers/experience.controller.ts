@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import HttpException from '../exceptions/http.exception';
 import { mapVmToDto } from '../mappers/experience.mapper';
 import { ExperienceMv } from '../mappers/types/experience.types';
 import experienceService from '../services/experince.service';
@@ -84,7 +83,7 @@ export const deleteExperience = async (
 ) => {
   try {
     const { id } = req.params;
-    
+
     const deletedExperience = await experienceService.deleteExperience(
       Number(id),
     );

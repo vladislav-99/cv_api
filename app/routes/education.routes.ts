@@ -3,9 +3,11 @@ import { Router } from 'express';
 import {
   getEducations,
   createEducation,
+  createEducations,
   updateEducation,
   deleteEducation,
 } from '../controllers/education.controller';
+
 import checkRequired, {
   FieldAction,
   RequredFields,
@@ -21,6 +23,13 @@ router.post(
   '/educations',
   checkRequired([RequredFields.name], FieldAction.create),
   createEducation,
+);
+
+// create several educations
+router.post(
+  '/educations/add-many',
+  checkRequired([RequredFields.educations]),
+  createEducations,
 );
 
 // update education

@@ -1,15 +1,20 @@
 import { EducationMv } from './types/education.types';
 
 export const mapVmToDto = {
-  updated: (t: EducationMv) => {
-    const id = Number(t.id);
+  updated: (model: EducationMv) => {
+    const id = Number(model.id);
     return {
       id,
-      name: t.name && t.name.trim(),
+      name: model.name && model.name.trim(),
     };
   },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  created: ({ id, ...t }: EducationMv) => ({
-    name: t.name!.trim(),
+  created: (model: EducationMv) => ({
+    name: model.name!.trim(),
   }),
+  createdMany: (educations: string[]) => (
+    educations.filter((value, index, self) => self.indexOf(value) === index).map(name => ({
+      name
+    }))
+  ),
 };
