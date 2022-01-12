@@ -5,6 +5,7 @@ import {
   createTechnology,
   updateTechnology,
   deleteTechnology,
+  createTechnologies,
 } from '../controllers/technology.controller';
 import checkRequired, {
   FieldAction,
@@ -24,6 +25,16 @@ router.post(
     FieldAction.create,
   ),
   createTechnology,
+);
+
+
+// create technologies
+router.post(
+  '/technologies/add-many',
+  checkRequired(
+    [RequredFields.technologies],
+  ),
+  createTechnologies
 );
 
 // update technology

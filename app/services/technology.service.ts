@@ -34,13 +34,13 @@ class TechnologyService {
       .createTechnologies(technologiesData)
       .catch((err) => {
         console.log(err);
-        throw new HttpException(400, 'Cannot create technology');
+        throw new HttpException(400, 'Cannot create technologies');
       });
 
     if (newTechnologiesCount.count) {
       return await technologyRepository.getLastCreatedTechnologies(newTechnologiesCount.count);
     } else {
-      throw new HttpException(400, 'Cannot create experiences');
+      throw new HttpException(400, 'Cannot create technologies');
     }
   }
 

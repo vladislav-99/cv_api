@@ -6,6 +6,7 @@ export enum RequredFields {
   name,
   projectType,
   technologyType,
+  technologies = 'technologies',
   experiences = 'experiences',
   educations = 'educations',
 }
@@ -15,7 +16,7 @@ export enum FieldAction {
   create,
 }
 
-function checkType<T, E>(
+export function checkType<T, E>(
   value: T,
   enumValue: E,
   typeField?: FieldAction,
@@ -34,7 +35,7 @@ function checkType<T, E>(
   return null;
 }
 
-function isValidName<T extends string>(name: T | undefined): boolean {
+export function isValidName<T extends string>(name: T | undefined): boolean {
 
   const isNotUndefinedButEmpty = name !== undefined && !name;
 
@@ -88,13 +89,27 @@ const checkRequired = (fields: RequredFields[], typeField?: FieldAction) =>
         case RequredFields.educations:
         case RequredFields.experiences: {
           const validatingData: string[] = req.body[reqiredField];
-          validatingData.forEach(e => {
-            const isValid = isValidName(e);
+          validatingData.forEach(name => {
+            const isValid = isValidName(name);
             if (!isValid) error = new HttpException(400, `'${reqiredField}' is not valid`);
           });
           break;
         }
+        case RequredFields.technologies: {
+          console.log('reqiredField: ', reqiredField);
+          const validatingData: { name: string, type: TechnologyTypes }[] = req.body.technologies;
 
+          validatingData.some(({ name, type }) => {
+            const isValid = isValidName(name);
+            const errorType = checkType(type, TechnologyTypes, typeField);
+            if (!isValid || errorType) {
+              error = new HttpException(400, `'${reqiredField}' is not valid`);
+            }
+            return !!error;
+          });
+
+          break;
+        }
         default: {
           error = null;
         }

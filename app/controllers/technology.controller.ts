@@ -32,6 +32,28 @@ export const createTechnology = async (
   }
 };
 
+export const createTechnologies = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const technologyModels: TechnologyMv[] = req.body.technologies;
+    const technologiesDto = technologyModels.map(model => mapVmToDto.created(model));
+
+    const technology = await technologyService
+      .createManyTechnologies(technologiesDto)
+      .catch((err) => {
+        next(err);
+      });
+
+    res.status(200).json(technology);
+  } catch (error) {
+    console.log(error);
+    next(new HttpException(500, 'Something went wrong'));
+  }
+};
+
 export const updateTechnology = async (
   req: Request,
   res: Response,
