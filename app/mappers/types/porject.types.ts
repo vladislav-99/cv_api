@@ -15,6 +15,7 @@ export interface ProjectVm {
   country?: string;
   name?: string;
   type?: ProjectTypes;
+  technologies?: number[] | string[]
 }
 export type ProjectElVm = ReturnType<typeof mapDtoToVm.listProjects>;
 

@@ -8,10 +8,18 @@ import prisma from '../prisma';
 
 export default class ProjectRepository {
   async createProject(
-    data: ProjectEntity,
+    {technologies, ...data}: ProjectEntity,
   ): Promise<ProjectWithTechnologiesEntity> {
+
     return await prisma.projects.create({
-      data,
+      data: {
+        ...data,
+        project_technologies: {
+          createMany: {
+            data: technologies
+          }
+        }
+      },
       include: {
         project_technologies: {
           include: {

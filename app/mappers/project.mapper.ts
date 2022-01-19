@@ -15,15 +15,19 @@ export const mapVmToDto = {
     name: name && name.trim(),
     ...project,
   }),
-  createdProject: ({ name, type, ...project }: ProjectVm) => ({
+  createdProject: ({ name, type, technologies = [], ...project }: ProjectVm) => ({
     name: name!.trim(),
     type: type!,
+    technologies: technologies.map(technology_id => ({ technology_id: Number(technology_id) })),
     ...project,
   }),
 };
 
 export const mapDtoToVm = {
-  project: (project: ProjectEtyToDTO) => project,
+  project: ({ technologies, ...project }: ProjectEtyToDTO) => ({
+    ...project,
+    technologies: technologies.map(technology => technology.name)
+  }),
   listProjects: ({ technologies, ...project }: ProjectEtyToDTO) => ({
     technologies: technologies.map((t: Technologies) => t.name),
     ...project,
