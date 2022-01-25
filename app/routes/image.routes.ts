@@ -12,8 +12,18 @@ cloudinary.v2.config({
   secure: true
 });
 
-const imageUpload = multer({
-  storage: multer.diskStorage(
+let storage
+if (process.env.NODE_ENV === 'production') {
+  storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, path.resolve(__dirname, 'build'))
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.fieldname + '_' + Date.now() + '_' + file.originalname)
+    }
+  })
+} else {
+  storage = multer.diskStorage(
     {
       destination: function (req, file, cb) {
         cb(null, 'images/');
@@ -28,10 +38,14 @@ const imageUpload = multer({
       }
     }
   ),
-});
+}
+
+
+const uploads = multer({ storage: storage });
+
 const router = Router();
 
-router.post('/image', imageUpload.single('image'), async (req, res, next) => {
+router.post('/image', uploads.single('image'), async (req, res, next) => {
   try {
     if (req.file) {
       const result = await cloudinary.v2.uploader.upload(req.file.path);
