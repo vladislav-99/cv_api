@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import formidable from 'express-formidable';
 import connectRouter from './routes';
 import errorMiddleware from './middleware/error.middleware';
 
@@ -12,7 +13,7 @@ app.use(
   }),
 );
 app.use(express.json());
-
+app.use(formidable());
 app.get('/', async (req: Request, res: Response) => {
   res.json({ message: 'Welcome to leviossa_cv API' });
 });

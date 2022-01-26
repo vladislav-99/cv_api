@@ -1,56 +1,25 @@
 import { Router } from 'express';
-import multer from 'multer';
-import path from 'path';
 import cloudinary from 'cloudinary';
-import fs from 'fs';
 import HttpException from '../exceptions/http.exception';
 
 cloudinary.v2.config({
-  cloud_name:  process.env.CLOUDINARY_NAME,
+  cloud_name: process.env.CLOUDINARY_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true
 });
 
-let storage;
-if (process.env.NODE_ENV === 'production') {
-  storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.resolve(__dirname, 'build'));
-    },
-    filename: function (req, file, cb) {
-      cb(null, file.fieldname + '_' + Date.now() + '_' + file.originalname);
-    }
-  });
-} else {
-  storage = multer.diskStorage(
-    {
-      destination: function (req, file, cb) {
-        cb(null, 'images/');
-      },
-      filename: function (req, file, cb) {
-        cb(
-          null,
-          new Date().valueOf() +
-          '_' +
-          file.originalname
-        );
-      }
-    }
-  );
-}
-
-
-const uploads = multer({ storage: storage });
 
 const router = Router();
 
-router.post('/image', uploads.single('image'), async (req, res, next) => {
-  try {
-    if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path);
+router.post('/image', async (req, res, next) => {
 
-      fs.unlinkSync(req.file.path);
+  try {
+    if (req.files) {
+      const image = req.files.image;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const result = await cloudinary.v2.uploader.upload(image.path);
       res.json({
         img_url: result.url
       });
@@ -61,12 +30,6 @@ router.post('/image', uploads.single('image'), async (req, res, next) => {
   }
 });
 
-router.get('/image/:filename', (req, res) => {
-  const { filename } = req.params;
-  const dirname = path.resolve();
-  const fullfilepath = path.join(dirname, 'images/' + filename);
-  return res.sendFile(fullfilepath);
-});
 
 router.delete('/image/:filename', async (req, res, next) => {
   try {
