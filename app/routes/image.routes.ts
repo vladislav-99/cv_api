@@ -12,16 +12,16 @@ cloudinary.v2.config({
   secure: true
 });
 
-let storage
+let storage;
 if (process.env.NODE_ENV === 'production') {
   storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, path.resolve(__dirname, 'build'))
+      cb(null, path.resolve(__dirname, 'build'));
     },
     filename: function (req, file, cb) {
-      cb(null, file.fieldname + '_' + Date.now() + '_' + file.originalname)
+      cb(null, file.fieldname + '_' + Date.now() + '_' + file.originalname);
     }
-  })
+  });
 } else {
   storage = multer.diskStorage(
     {
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
         );
       }
     }
-  ),
+  );
 }
 
 
