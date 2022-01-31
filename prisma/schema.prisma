@@ -29,7 +29,7 @@ model Projects {
   description          String?
   link                 String?
   type                 ProjectTypes
-  photos               String[]
+  photos               Project_images[]
   country              String?
   project_technologies Project_technologies[]
   cv_projects          CV_projects[]
@@ -132,6 +132,16 @@ model User_education {
 
   @@index([user_id])
 }
+
+model Project_images {
+  id  Int       @id @default(autoincrement())
+  url String
+  name String
+  size Int
+  project Projects? @relation(fields: [project_id], references: [id])
+  project_id Int?
+}
+
 
 enum ProjectTypes {
   WEB_SERVICE

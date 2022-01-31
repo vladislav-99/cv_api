@@ -1,4 +1,4 @@
-import { ProjectTypes, Projects, Technologies } from '.prisma/client';
+import { ProjectTypes, Projects, Technologies, Project_images } from '.prisma/client';
 import {
   mapDtoToEty,
   mapDtoToVm,
@@ -11,7 +11,7 @@ export interface ProjectVm {
   id?: number | string;
   description?: string;
   link?: string;
-  photos?: string[];
+  photos?: number[];
   country?: string;
   name?: string;
   type?: ProjectTypes;
@@ -28,9 +28,10 @@ export type ProjectEtyToDTO = ReturnType<typeof mapEtyToDto.project>;
 export type ProjectEntity = ReturnType<typeof mapDtoToEty.createdProject>;
 export type ProjectUpdateEntity = ReturnType<typeof mapDtoToEty.updatedProject>;
 
-export type ProjectWithTechnologiesEntity =
+export type ProjectWithTechnologiesAndImagesEntity =
   | Projects & {
       project_technologies: { technology: Technologies }[];
+      photos: Array<Project_images>
     };
 
 export type ProjectListElEntity =

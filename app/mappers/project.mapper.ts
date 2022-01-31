@@ -5,17 +5,17 @@ import {
   ProjectUpdateVmToDto,
   ProjectVm,
   ProjectVmToDto,
-  ProjectWithTechnologiesEntity,
-} from './types/porject.types';
+  ProjectWithTechnologiesAndImagesEntity,
+} from './types/project.types';
 
 // VM -> DTO -> VM
 export const mapVmToDto = {
-  updatedProject: ({ id, name, ...project }: ProjectVm) => ({
+  updatedProject: ({ id, name, photos, ...project }: ProjectVm) => ({
     id: Number(id),
     name: name && name.trim(),
     ...project,
   }),
-  createdProject: ({ name, type, technologies = [], ...project }: ProjectVm) => ({
+  createdProject: ({ name, type, photos, technologies = [], ...project }: ProjectVm) => ({
     name: name!.trim(),
     type: type!,
     technologies: technologies.map(technology_id => ({ technology_id: Number(technology_id) })),
@@ -24,9 +24,8 @@ export const mapVmToDto = {
 };
 
 export const mapDtoToVm = {
-  project: ({ technologies, ...project }: ProjectEtyToDTO) => ({
-    ...project,
-    technologies: technologies.map(technology => technology.name)
+  project: ({ ...project }: ProjectEtyToDTO) => ({
+    ...project
   }),
   listProjects: ({ technologies, ...project }: ProjectEtyToDTO) => ({
     technologies: technologies.map((t: Technologies) => t.name),
@@ -40,7 +39,7 @@ export const mapEtyToDto = {
   project: ({
     project_technologies,
     ...ety
-  }: ProjectWithTechnologiesEntity | ProjectListElEntity) => ({
+  }: ProjectWithTechnologiesAndImagesEntity) => ({
     ...ety,
     technologies: project_technologies.map(
       (t: { technology: Technologies }) => t.technology,
@@ -49,8 +48,11 @@ export const mapEtyToDto = {
 };
 
 export const mapDtoToEty = {
-  updatedProject: (project: ProjectUpdateVmToDto) => ({
+  updatedProject: ({technologies, ...project}: ProjectUpdateVmToDto) => ({
     ...project,
+    technologies: technologies ? technologies.map(id => ({
+      technology_id: Number(id)
+    })) : undefined,
     id: Number(project.id!),
   }),
 

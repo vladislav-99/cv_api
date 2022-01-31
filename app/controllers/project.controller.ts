@@ -1,8 +1,18 @@
-import { NextFunction, Request, Response } from 'express';
+import {NextFunction, Request, Response} from 'express';
 import HttpException from '../exceptions/http.exception';
-import { mapDtoToVm, mapVmToDto } from '../mappers/project.mapper';
-import { ProjectVm } from '../mappers/types/porject.types';
+import {
+  mapDtoToVm,
+  mapVmToDto
+} from '../mappers/project.mapper';
+import {ProjectEtyToDTO, ProjectVm} from '../mappers/types/project.types';
 import projectService from '../services/project.service';
+import projectImageService from '../services/projectImage.service';
+import {
+  arrayDifference,
+  isArrayEquals
+} from "../utils/array";
+import cloudinaryService from '../services/cloudinary.service';
+import {getProjectImageName} from "../mappers/projectImage.mapper";
 
 export const getAllProjects = async (
   req: Request,
@@ -10,18 +20,18 @@ export const getAllProjects = async (
   next: NextFunction,
 ) => {
   try {
-    const { skip, take } = req.query;
+    const {skip, take} = req.query;
 
     const options = {
       skip: skip ? Number(skip) : undefined,
       take: take ? Number(take) : undefined,
     };
 
-    const projects = await projectService.getProjects(options);
+    const projectDTOs = await projectService.getProjects(options);
 
-    const projectsList = projects.map((p) => mapDtoToVm.listProjects(p));
+    // const projectsList = projects.map((p) => mapDtoToVm.listProjects(p));
 
-    res.json(projectsList);
+    res.json(projectDTOs);
   } catch (error) {
     next(error);
   }
@@ -33,7 +43,7 @@ export const getProjectById = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
 
     const projectDTO = await projectService.getProjectById(Number(id));
 
@@ -52,16 +62,30 @@ export const createProject = async (
   res: Response,
   next: NextFunction,
 ) => {
+  const projectModel: ProjectVm = req.body;
+
   try {
-    const projectModel: ProjectVm = req.body;
     const projectDTO = mapVmToDto.createdProject(projectModel);
 
     const createdProject = await projectService.createProject(projectDTO);
 
-    const projectVM = mapDtoToVm.project(createdProject);
+    if (projectModel.photos) {
+      const photosIds: number[] = projectModel.photos;
+      await projectImageService.setProjectIdToPhotos(createdProject.id, photosIds);
+    }
+
+    const updatedProjectDTO = await projectService.getProjectById(createdProject.id);
+
+    const projectVM = mapDtoToVm.project(updatedProjectDTO);
 
     res.status(200).json(projectVM);
   } catch (error) {
+    if (projectModel.photos?.length) {
+      const photosIds: number[] = projectModel.photos;
+      const photos = await projectImageService.getProjectImagesById(photosIds);
+      await projectImageService.deleteProjectImages(photosIds);
+      await cloudinaryService.deleteImages(photos.map(({url}) => getProjectImageName(url)));
+    }
     next(error);
   }
 };
@@ -72,7 +96,7 @@ export const updateProject = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
+    const {id} = req.params;
     const projectModel: ProjectVm = {
       id,
       ...req.body,
@@ -80,9 +104,33 @@ export const updateProject = async (
 
     const projectDTO = mapVmToDto.updatedProject(projectModel);
 
-    const updatedProject = await projectService.updateProject(projectDTO);
+    let updatedProjectDTO: ProjectEtyToDTO = await projectService.updateProject(projectDTO);
 
-    const projectVM = mapDtoToVm.project(updatedProject);
+
+    if (projectModel.photos) {
+      const newPhotosIds = projectModel.photos;
+      const oldPhotosIds = updatedProjectDTO.photos.map(({id}) => id);
+
+      console.log('newPhotosIds', newPhotosIds);
+      console.log('oldPhotosIds', oldPhotosIds);
+
+      if (!isArrayEquals(newPhotosIds, oldPhotosIds)) {
+        // update images in database and cloud
+
+        const deletingPhotosIds = arrayDifference<number>(oldPhotosIds, newPhotosIds);
+        console.log('deletingPhotosIds', deletingPhotosIds);
+
+        if(deletingPhotosIds.length) {
+          const deletingImages = await projectImageService.getProjectImagesById(deletingPhotosIds);
+          await cloudinaryService.deleteImages(deletingImages.map(image => getProjectImageName(image.url)));
+        }
+        await projectImageService.deleteProjectImages(deletingPhotosIds);
+        await projectImageService.setProjectIdToPhotos(updatedProjectDTO.id, newPhotosIds);
+        updatedProjectDTO = await projectService.getProjectById(updatedProjectDTO.id);
+      }
+    }
+
+    const projectVM = mapDtoToVm.project(updatedProjectDTO);
 
     res.status(200).json(projectVM);
   } catch (error) {
@@ -96,18 +144,23 @@ export const deleteProject = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
 
     const deletedProject = await projectService
-      .deleteProject(Number(id))
+      .deleteProject(id)
       .catch((err) => {
         next(err);
       });
 
     if (deletedProject) {
-      res.json({ success: true, deletedProject });
+      const imageNames = deletedProject.photos.map(({url}) => getProjectImageName(url));
+      const imageIds = deletedProject.photos.map(({id}) => id);
+      await projectImageService.deleteProjectImages(imageIds);
+      await cloudinaryService.deleteImages(imageNames);
+
+      res.json({success: true, deletedProject});
     } else {
-      res.status(400).json({ success: false });
+      res.status(400).json({success: false});
     }
   } catch (error) {
     console.log(error);

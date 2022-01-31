@@ -5,20 +5,22 @@ import {
   ProjectEtyToDTO,
   ProjectUpdateVmToDto,
   ProjectVmToDto,
-  ProjectWithTechnologiesEntity,
-} from '../mappers/types/porject.types';
+  ProjectWithTechnologiesAndImagesEntity,
+} from '../mappers/types/project.types';
 
 import ProjectRepository from '../repositories/project.repository';
 import { PaginationsProps } from '../types';
 
-class ProjectSevice {
+class ProjectService {
   async getProjectById(id: number): Promise<ProjectEtyToDTO> {
     const projectRepository = new ProjectRepository();
 
-    const projectEntity: ProjectWithTechnologiesEntity | null = await projectRepository.getProject(id).catch((err) => {
-      console.log(err);
-      throw new HttpException(404, 'Project is not found');
-    });
+    const projectEntity: ProjectWithTechnologiesAndImagesEntity | null = await projectRepository
+      .getProject(id)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(404, 'Project is not found');
+      });
 
     if (!projectEntity) throw new HttpException(404, 'Project is not found');
 
@@ -73,14 +75,16 @@ class ProjectSevice {
     return mapEtyToDto.project(updatedProjectEntity);
   }
 
-  async deleteProject(id: number): Promise<Projects | null> {
+  async deleteProject(id: number) {
     const projectRepository = new ProjectRepository();
 
-    return await projectRepository.deleteProject(id).catch((err) => {
-      console.log(err);
-      throw new HttpException(404, 'Project is not found');
-    });
+    return await projectRepository
+      .deleteProject(id)
+      .catch((err) => {
+        console.log(err);
+        throw new HttpException(404, 'Project is not found');
+      });
   }
 }
 
-export default new ProjectSevice();
+export default new ProjectService();
